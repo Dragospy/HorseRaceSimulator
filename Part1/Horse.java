@@ -19,7 +19,7 @@ public class Horse
     /**
      * Constructor for objects of class Horse
      */
-    public Horse(String horseName, char horseSymbol, double horseConfidence)
+    public Horse(char horseSymbol, String horseName, double horseConfidence)
     {
        this.name = horseName;  //Horse's name
        this.symbol = horseSymbol;  //Horse's symbol
