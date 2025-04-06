@@ -23,7 +23,16 @@ public class Horse
     {
        this.name = horseName;  //Horse's name
        this.symbol = horseSymbol;  //Horse's symbol
-       this.confidence = horseConfidence;  //Horse's confidence
+
+        if (horseConfidence < 0){
+            this.confidence = 0;  //Horse's confidence cannot be negative
+        }
+        else if (horseConfidence > 1){
+            this.confidence = 1;  //Horse's confidence cannot be greater than 1
+        }
+        else{
+            this.confidence = horseConfidence;  //new confidence is between 0 and 1 so we set it as the actual confidence
+        }
     }
     
     
@@ -74,7 +83,15 @@ public class Horse
 
     public void setConfidence(double newConfidence)
     {
-        this.confidence = newConfidence;
+        if (newConfidence < 0){
+            this.confidence = 0;  //Horse's confidence cannot be negative
+        }
+        else if (newConfidence > 1){
+            this.confidence = 1;  //Horse's confidence cannot be greater than 1
+        }
+        else{
+            confidence = newConfidence;  //new confidence is between 0 and 1 so we set it as the actual confidence
+        }
     }
     
     public void setSymbol(char newSymbol)
