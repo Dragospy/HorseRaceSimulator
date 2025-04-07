@@ -132,7 +132,7 @@ public class Race
      */
     private boolean raceWonBy(Horse theHorse)
     {
-        return theHorse.getDistanceTravelled() == raceLength;
+        return (theHorse.getDistanceTravelled() == raceLength && !theHorse.hasFallen());
     }
     
     /***
