@@ -65,6 +65,7 @@ public class Race
                       
         while (!finished)
         {
+            
             //move each horse
             moveHorse(lane1Horse);
             moveHorse(lane2Horse);
@@ -105,6 +106,11 @@ public class Race
                     System.out.println("The winner is... " + winners[0].getName());
                 }
 
+            }
+
+            if (lane1Horse.hasFallen() && lane2Horse.hasFallen() && lane3Horse.hasFallen()){
+                finished = true;
+                System.out.println("All horses have fallen. No winners.");
             }
            
             //wait for 100 milliseconds
