@@ -83,13 +83,15 @@ public class Race
                     System.out.println("And the winner is... " + lane2Horse.getName() + "!");
                 } else if (raceWonBy(lane3Horse)) {
                     System.out.println("And the winner is... " + lane3Horse.getName() + "!");
-                }
+                } 
             }
            
             //wait for 100 milliseconds
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
-            }catch(Exception e){}
+            }catch(InterruptedException e){
+                System.out.println("Error: " + e);
+            }
         }
     }
     
@@ -142,7 +144,6 @@ public class Race
         
         multiplePrint('=',raceLength+3); //top edge of track
         System.out.println();
-
 
         printLane(lane1Horse);
         System.out.println();
