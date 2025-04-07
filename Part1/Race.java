@@ -53,6 +53,8 @@ public class Race
      */
     public void startRace()
     {
+        Horse[] winners = new Horse[3];
+        int winnerIndex = 0;
         //declare a local variable to tell us when the race is finished
         boolean finished = false;
         
@@ -75,15 +77,34 @@ public class Race
             if ( raceWonBy(lane1Horse) || raceWonBy(lane2Horse) || raceWonBy(lane3Horse) )
             {
                 finished = true;
-
-                //Print the winner
+                
+                //Figure out the winner(s)
                 if (raceWonBy(lane1Horse)) {
-                    System.out.println("And the winner is... " + lane1Horse.getName() + "!");
-                } else if (raceWonBy(lane2Horse)) {
-                    System.out.println("And the winner is... " + lane2Horse.getName() + "!");
-                } else if (raceWonBy(lane3Horse)) {
-                    System.out.println("And the winner is... " + lane3Horse.getName() + "!");
+                    winners[winnerIndex] = lane1Horse;
+                    winnerIndex++;
                 } 
+                if (raceWonBy(lane2Horse)) {
+                    winners[winnerIndex] = lane2Horse;
+                    winnerIndex++;
+                } 
+                if (raceWonBy(lane3Horse)) {
+                    winners[winnerIndex] = lane3Horse;
+                    winnerIndex++;
+                } 
+
+                //Print the winner(s)
+                if (winnerIndex > 1) {
+                    System.out.print("It's a tie between: ");
+                    for (int i = 0; i < winnerIndex; i++) {
+                        System.out.print(winners[i].getName());
+                        if (i < winnerIndex - 1) {
+                            System.out.print(", ");
+                        }
+                    }
+                } else {
+                    System.out.println("The winner is... " + winners[0].getName());
+                }
+
             }
            
             //wait for 100 milliseconds
@@ -140,7 +161,6 @@ public class Race
      */
     private void printRace()
     {
-        System.out.print('\u000C');  //clear the terminal window
         
         multiplePrint('=',raceLength+3); //top edge of track
         System.out.println();
