@@ -103,7 +103,7 @@ public class Race
                         }
                     }
                 } else {
-                    System.out.println("The winner is... " + winners[0].getName());
+                    System.out.println("The winner is... " + winners[0].getName() + "!");
                 }
 
             }
@@ -221,6 +221,9 @@ public class Race
         
         //print the | for the end of the track
         System.out.print('|');
+
+        //print the horse's name and confidence 
+        System.out.print(" " + theHorse.getName() + " (Current confidence " + theHorse.getConfidence() + ")");
     }
         
     
