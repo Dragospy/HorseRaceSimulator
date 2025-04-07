@@ -37,21 +37,11 @@ public class Race
      */
     public void addHorse(Horse theHorse, int laneNumber)
     {
-        if (laneNumber == 1)
-        {
-            lane1Horse = theHorse;
-        }
-        else if (laneNumber == 2)
-        {
-            lane2Horse = theHorse;
-        }
-        else if (laneNumber == 3)
-        {
-            lane3Horse = theHorse;
-        }
-        else
-        {
-            System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
+        switch (laneNumber) {
+            case 1 -> lane1Horse = theHorse;
+            case 2 -> lane2Horse = theHorse;
+            case 3 -> lane3Horse = theHorse;
+            default -> System.out.println("Cannot add horse to lane " + laneNumber + " because there is no such lane");
         }
     }
     
