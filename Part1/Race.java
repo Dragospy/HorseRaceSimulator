@@ -13,6 +13,7 @@ public class Race
     private Horse lane1Horse;
     private Horse lane2Horse;
     private Horse lane3Horse;
+    private final char fallSymbol = '❌';
 
     /**
      * Constructor for objects of class Race
@@ -209,7 +210,7 @@ public class Race
         //else print the horse's symbol
         if(theHorse.hasFallen())
         {
-            System.out.print('❌');
+            System.out.print(fallSymbol);
 
             //print the spaces after the horse
             multiplePrint(' ',spacesAfter - 1);
