@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Race
 {
-    private int raceLength;
+    private final int raceLength;
     private Horse lane1Horse;
     private Horse lane2Horse;
     private Horse lane3Horse;
