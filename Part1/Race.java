@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class Race
 {
     private final int raceLength;
-    private final ArrayList<Horse> horses;    
+    private final ArrayList<Horse> horses;  
+    private final boolean displayText;  
     private final char fallSymbol = '❌';
 
     /**
@@ -21,11 +22,12 @@ public class Race
      * 
      * @param distance the length of the racetrack (in metres/yards...)
      */
-    public Race(int distance)
+    public Race(int distance, boolean textVersion)
     {
         // initialise instance variables
         raceLength = distance;
         horses = new ArrayList<>();
+        displayText = textVersion; //set to false to stop printing
     }
     
     /**
@@ -47,7 +49,7 @@ public class Race
     public void startRace()
     {
         if (horses.isEmpty()){
-            System.out.println("No horses, race cannot start!");
+            println("No horses, race cannot start!");
             return;
         }
 
@@ -82,17 +84,17 @@ public class Race
             {
                 //Print the winner(s)
                 if (winners.size() > 1) {
-                    System.out.print("It's a tie between: ");
+                    print("It's a tie between: ");
                     int i = 0;
                     for (Horse horse : winners) {
-                        System.out.print(horse.getName());
+                        print(horse.getName());
                         if (i < winners.size() - 1) {
-                            System.out.print(", ");
+                            print(", ");
                         }
                         i++;
                     }
                 } else {
-                    System.out.println("The winner is... " + (winners.get(0)).getName() + "!");
+                    println("The winner is... " + (winners.get(0)).getName() + "!");
                 }
 
                 finished = true;
@@ -106,7 +108,7 @@ public class Race
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
             }catch(InterruptedException e){
-                System.out.println("Error: " + e);
+                println("Error: " + e);
             }
         }
     }
@@ -157,18 +159,18 @@ public class Race
     private void printRace()
     {
         
-        System.out.print("\033\143");
+        print("\033\143");
         
         multiplePrint('=',raceLength+3); //top edge of track
-        System.out.println();
+        println("");
 
         for (Horse horse : horses) {
             printLane(horse);
-            System.out.println();
+            println("");
         }
         
         multiplePrint('=',raceLength+3); //bottom edge of track
-        System.out.println();    
+        println("");    
     }
     
     /**
@@ -185,7 +187,7 @@ public class Race
         int spacesAfter = raceLength - theHorse.getDistanceTravelled();
         
         //print a | for the beginning of the lane
-        System.out.print('|');
+        print('|');
         
         //print the spaces before the horse
         multiplePrint(' ',spacesBefore);
@@ -194,24 +196,24 @@ public class Race
         //else print the horse's symbol
         if(theHorse.hasFallen())
         {
-            System.out.print(fallSymbol);
+            print(fallSymbol);
 
             //print the spaces after the horse
             multiplePrint(' ',spacesAfter - 1);
         }
         else
         {
-            System.out.print(theHorse.getSymbol());
+            print(theHorse.getSymbol());
 
             //print the spaces after the horse
             multiplePrint(' ',spacesAfter);
         }
         
         //print the | for the end of the track
-        System.out.print('|');
+        print('|');
 
         //print the horse's name and confidence 
-        System.out.print(" " + theHorse.getName() + " (Current confidence " + theHorse.getConfidence() + ")");
+        print(" " + theHorse.getName() + " (Current confidence " + theHorse.getConfidence() + ")");
     }
         
     
@@ -226,7 +228,7 @@ public class Race
         int i = 0;
         while (i < times)
         {
-            System.out.print(aChar);
+            print(aChar);
             i = i + 1;
         }
     }
@@ -245,10 +247,50 @@ public class Race
         }
 
         if (fallenCount == horses.size()) {
-            System.out.println("All horses have fallen. No winners.");
+            println("All horses have fallen. No winners.");
             return true;
         }
 
         return false;
+    }
+
+     /**
+     * Print a string to the console
+     * This method only prints something if the displayText variable is true
+     * 
+     * @param text the text to print
+     */
+
+    private void print(String text)
+    {
+        if (displayText) {
+            System.out.print(text);
+        }
+    }
+
+    /**
+     * Print a character to the console
+     * This method only prints something if the displayText variable is true
+     * 
+     * @param text the text to print
+     */
+    private void print(char text)
+    {
+        if (displayText) {
+            System.out.print(text);
+        }
+    }
+
+    /**
+     * Print a string to the console and add a new line
+     * This method only prints something if the displayText variable is true
+     * 
+     * @param text the text to print
+     */
+    private void println(String text)
+    {
+        if (displayText) {
+            System.out.println(text);
+        }
     }
 }
