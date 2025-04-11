@@ -1,3 +1,4 @@
+package Part1;
 /**
  * This class is the blueprint for an object that represents a Horse.
  * 
