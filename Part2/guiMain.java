@@ -1,30 +1,16 @@
 package Part2;
 
 import Part1.*;
-import java.util.ArrayList;
 import javax.swing.*;
 
 public class guiMain {
     private static int laneCount = 3; // Number of lanes
     public static void main(String[] args) {
-        ArrayList<JComponent> components = new ArrayList<>();   
-        
-        JButton button = createButton("Increment lane", 0, 0);
-        JButton startButton = createButton("Start", 25, 25);
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("Track Setup", trackPanel());
+        tabs.addTab("Race Start", racePanel());
 
-        // Display a message dialog when the button is clicked
-        button.addActionListener(e -> {
-            laneCount++;
-        });
-
-        startButton.addActionListener(e -> {
-            startTheRace();
-        });
-
-        components.add(button);
-        components.add(startButton);
-
-        initialiseFrame("Horse Racing Simulator", components);
+        initialiseFrame("Race Horse Simulator", tabs);
     }
 
     public static void startTheRace(){
@@ -44,13 +30,41 @@ public class guiMain {
         return button;
     }
 
-    public static void initialiseFrame(String title, ArrayList<JComponent> components) {
+    public static JPanel racePanel(){
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Race Start"));
+
+        JButton startButton = createButton("Start", 25, 25);
+
+        startButton.addActionListener(e -> {
+            startTheRace();
+        });
+
+        panel.add(startButton);
+
+        return panel;
+    }
+
+    public static JPanel trackPanel(){
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Track Customization"));
+
+        JButton button = createButton("Increment lane", 0, 0);
+
+        // Display a message dialog when the button is clicked
+        button.addActionListener(e -> {
+            laneCount++;
+        });
+
+        panel.add(button);
+
+        return panel;
+    }
+
+    public static void initialiseFrame(String title, JComponent tabs) {
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(null); // Use null layout to allow manual positioning of components
-        for (JComponent component : components) {
-            frame.add(component);
-        }
+        frame.add(tabs);
         frame.setSize(400, 400);
         frame.setVisible(true);
     }
