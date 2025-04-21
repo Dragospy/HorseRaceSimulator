@@ -5,27 +5,34 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 public class guiMain {
+    private static int laneCount = 3; // Number of lanes
     public static void main(String[] args) {
-        ArrayList<JComponent> components = new ArrayList<>();    
+        ArrayList<JComponent> components = new ArrayList<>();   
         
-        JButton button = createButton("Cool Button", 0, 0);
+        JButton button = createButton("Increment lane", 0, 0);
+        JButton startButton = createButton("Start", 25, 25);
 
         // Display a message dialog when the button is clicked
-        button.addActionListener(e -> JOptionPane.showMessageDialog(null,
-        "Welcome to OOP at Queen Mary University of London"));
+        button.addActionListener(e -> {
+            laneCount++;
+        });
+
+        startButton.addActionListener(e -> {
+            startTheRace();
+        });
 
         components.add(button);
+        components.add(startButton);
 
         initialiseFrame("Horse Racing Simulator", components);
+    }
 
-        Race currentRace = new Race(15, false);
+    public static void startTheRace(){
+        Race currentRace = new Race(15, true);
 
-        Horse horse1 = new Horse('A', "Horse A",0.8);
-        Horse horse2 = new Horse('B', "Horse B", 0.6);
-        Horse horse3 = new Horse('C', "Horse C", 0.7);
-        currentRace.addHorse(horse1);
-        currentRace.addHorse(horse2);
-        currentRace.addHorse(horse3);
+        for (int i = 0; i < laneCount; i++) {
+            currentRace.addHorse(new Horse((char)(i + '0'), "Horse " + i,0.8));
+        }
 
         currentRace.startRace();
     }
