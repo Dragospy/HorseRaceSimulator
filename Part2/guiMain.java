@@ -2,9 +2,11 @@ package Part2;
 
 import Part1.*;
 import javax.swing.*;
-
 public class guiMain {
-    private static int laneCount = 3; // Number of lanes
+
+    private final static valueContainer laneCount = new valueContainer(3);
+    private final static valueContainer trackLength = new valueContainer(15);
+
     public static void main(String[] args) {
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Track Setup", trackPanel());
@@ -14,9 +16,9 @@ public class guiMain {
     }
 
     public static void startTheRace(){
-        Race currentRace = new Race(15, true);
+        Race currentRace = new Race(trackLength.value, true);
 
-        for (int i = 0; i < laneCount; i++) {
+        for (int i = 0; i < laneCount.value; i++) {
             currentRace.addHorse(new Horse((char)(i + '0'), "Horse " + i,0.8));
         }
 
@@ -45,27 +47,64 @@ public class guiMain {
         return panel;
     }
 
-    public static JPanel trackPanel(){
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Track Customization"));
+//Increment / Decrement element
+    private static JPanel idElement(String valueName, String displayName, valueContainer value){
+        //Custom lane count
+        JPanel laneCountPanel = new JPanel();
+        JLabel laneCountLabel = new JLabel(displayName+": " + value.value);
 
-        JButton button = createButton("Increment lane", 0, 0);
-
-        // Display a message dialog when the button is clicked
-        button.addActionListener(e -> {
-            laneCount++;
+        // Increments lane count by 1
+        JButton incrementButton = createButton("Increment " + valueName, 0, 0);
+        incrementButton.addActionListener(e -> {
+            value.value++;
+            laneCountLabel.setText(displayName+": " + value.value);
         });
 
-        panel.add(button);
+        // Decrements lane count by 1
+        JButton decrementButton = createButton("Decrement " + valueName, 0, 0);
+        decrementButton.addActionListener(e -> {
+            if (value.value >0){
+                value.value--;
+                laneCountLabel.setText(displayName+": " + value.value);   
+            }
+        });
 
-        return panel;
+        //Add components to panel
+        laneCountPanel.add(incrementButton);
+        laneCountPanel.add(laneCountLabel);
+        laneCountPanel.add(decrementButton);
+
+        return laneCountPanel;
+    }
+
+    public static JPanel trackPanel(){
+        //Main panel setup
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JLabel title = new JLabel("Track Customization");
+        title.setAlignmentX(title.CENTER_ALIGNMENT);
+        mainPanel.add(title);
+
+        //Add panels
+        mainPanel.add(idElement("Lanes", "lane", laneCount));
+         mainPanel.add(idElement("Track length", "length", trackLength));
+        return mainPanel;
     }
 
     public static void initialiseFrame(String title, JComponent tabs) {
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(tabs);
-        frame.setSize(400, 400);
+        frame.setSize(800, 500);
         frame.setVisible(true);
+    }
+}
+
+
+class valueContainer{
+    int value;
+
+    public valueContainer(int newValue) {
+        value = newValue;
     }
 }
