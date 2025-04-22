@@ -31,13 +31,33 @@ public class Race
     }
     
     /**
-     * Adds a horse to the race in a given lane
+     * Adds a new lane and the horse inside of it (for TEXT version)
      * 
      * @param theHorse the horse to be added to the race
      */
     public void addHorse(Horse theHorse)
     {
         horses.add(theHorse);
+    }
+
+    /**
+     * Adds an empty lane (for GUI version)
+     * 
+     */
+    public void addLane()
+    {
+        horses.add(null);
+    }
+
+    /**
+     * Adds a horse to the race in a given lane (for GUI version)
+     * 
+     * @param theHorse the horse to be added to the race
+     * @param laneId the lane that the horse is being placed into
+     */
+    public void setHorseLane(Horse theHorse, int laneId)
+    {
+        horses.set(laneId, theHorse);
     }
     
     /**
@@ -58,7 +78,9 @@ public class Race
         
         //reset all the lanes (all horses not fallen and back to 0). 
         for (Horse horse : horses) {
-            horse.goBackToStart();
+            if (horse != null){
+                horse.goBackToStart();
+            }
         }
                       
         while (!finished)
@@ -66,7 +88,9 @@ public class Race
             
             //move each horse
             for (Horse horse: horses){
-                moveHorse(horse);
+                if (horse != null){
+                    moveHorse(horse);
+                }
             }
                         
             //print the race positions
@@ -74,7 +98,7 @@ public class Race
 
             //Figure out if a horse has won
             for (Horse horse : horses) {
-                if (raceWonBy(horse)) {
+                if (horse != null && raceWonBy(horse)) {
                     winners.add(horse);
                 }
             }
