@@ -48,7 +48,7 @@ public class guiMain {
     }
 
 //Increment / Decrement element
-    private static JPanel idElement(String valueName, String displayName, valueContainer value){
+    private static JPanel idElement(String valueName, String displayName, valueContainer value, int min, int max){
         //Custom lane count
         JPanel laneCountPanel = new JPanel();
         JLabel laneCountLabel = new JLabel(displayName+": " + value.value);
@@ -56,14 +56,16 @@ public class guiMain {
         // Increments lane count by 1
         JButton incrementButton = createButton("Increment " + valueName, 0, 0);
         incrementButton.addActionListener(e -> {
-            value.value++;
-            laneCountLabel.setText(displayName+": " + value.value);
+            if (value.value < max){
+                value.value++;
+                laneCountLabel.setText(displayName+": " + value.value);
+            }
         });
 
         // Decrements lane count by 1
         JButton decrementButton = createButton("Decrement " + valueName, 0, 0);
         decrementButton.addActionListener(e -> {
-            if (value.value >0){
+            if (value.value > min){
                 value.value--;
                 laneCountLabel.setText(displayName+": " + value.value);   
             }
@@ -82,12 +84,12 @@ public class guiMain {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         JLabel title = new JLabel("Track Customization");
-        title.setAlignmentX(title.CENTER_ALIGNMENT);
+        title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         mainPanel.add(title);
 
         //Add panels
-        mainPanel.add(idElement("Lanes", "lane", laneCount));
-         mainPanel.add(idElement("Track length", "length", trackLength));
+        mainPanel.add(idElement("Lanes", "lane", laneCount, 0, 15));
+        mainPanel.add(idElement("Track length", "length", trackLength, 5, 40));
         return mainPanel;
     }
 
