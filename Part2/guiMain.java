@@ -78,45 +78,57 @@ public class guiMain {
     public static JPanel trackPanel(){
         //Main panel setup
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel laneSelectors = new JPanel();
         JLabel title = new JLabel("Track Customization");
-        title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        mainPanel.add(title);
-
         JPanel contentPanel = new JPanel();
+        String[] horseNames = new String[availableHorses.length];
+
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        laneSelectors.setLayout(new BoxLayout(laneSelectors, BoxLayout.Y_AXIS));
+
+        for (int i = 0; i < availableHorses.length; i++){
+            horseNames[i] = availableHorses[i].getName();
+        }
+
 
         //Add panels
         JPanel laneCountElement = idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15, () -> {
             if (raceTrack != null){
                 raceTrack.changeLaneCount(laneCount.value);
             }
+
+            int count = laneSelectors.getComponentCount();
+            if (count > laneCount.value) {
+                laneSelectors.remove(count - 1); // remove the last component
+                laneSelectors.revalidate();      // re-layout the panel
+                laneSelectors.repaint();         // repaint the UI
+            }
+            else if (count < laneCount.value) {
+                JPanel laneSelector = laneSelector(laneCount.value, horseNames);
+                laneSelectors.add(laneSelector);
+            }
         });
-        contentPanel.add(laneCountElement);
 
         JPanel trackLengthElement = idElement("Track Length" ,"Track length", "length", trackLength, 5, 40, () -> {
             if (raceTrack != null){
                 raceTrack.changeTrackLength(trackLength.value);
             }
+
+            
         });
-        contentPanel.add(trackLengthElement);
-
-        JPanel laneSelectors = new JPanel();
-        laneSelectors.setLayout(new BoxLayout(laneSelectors, BoxLayout.Y_AXIS));
-        String[] horseNames = new String[availableHorses.length];
-
-        for (int i = 0; i < availableHorses.length; i++){
-            horseNames[i] = availableHorses[i].getName();
-        }
 
         for (int i = 1; i <= laneCount.value; i ++){
             JPanel laneSelector = laneSelector(i, horseNames);
             laneSelectors.add(laneSelector);
-
-            System.out.println(i);
         }
 
-        mainPanel.add(laneSelectors);
+        contentPanel.add(laneCountElement);
+        contentPanel.add(trackLengthElement);
+
+        mainPanel.add(title);
         mainPanel.add(contentPanel);
+        mainPanel.add(laneSelectors);
 
 
         return mainPanel;
@@ -151,7 +163,6 @@ public class guiMain {
         Race currentRace = new Race(trackLength.value, true);
 
         for (int i = 0; i < laneCount.value; i++) {
-            System.out.println(i);
             currentRace.addHorse(horses[i]);
         }
 
@@ -177,6 +188,7 @@ public class guiMain {
             horses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
         });
 
+        horses[lane-1] = availableHorses[lane-1];
         laneSelector.setSelectedIndex(lane - 1);
 
         panel.add(elementTitle);
