@@ -1,15 +1,33 @@
 package Part2;
 
 import Part1.*;
-import java.util.ArrayList;
+import java.awt.event.ItemEvent;
 import javax.swing.*;
 
 public class guiMain {
-
+    private final static int height = 800;
+    private final static int width = 1200;
     private final static valueContainer laneCount = new valueContainer(3);
     private final static valueContainer trackLength = new valueContainer(15);
-    private static JPanel raceTrack = null;
-    private final static ArrayList<Horse> horses = new ArrayList<>();
+    private static raceTrack raceTrack = null;
+    private final static Horse[] availableHorses = {
+        new Horse('A', "Horse A" ,0.8),
+        new Horse('B', "Horse B" ,0.8),
+        new Horse('C', "Horse C" ,0.8),
+        new Horse('D', "Horse D" ,0.8),
+        new Horse('E', "Horse E" ,0.8),
+        new Horse('F', "Horse F" ,0.8),
+        new Horse('G', "Horse G" ,0.8),
+        new Horse('H', "Horse H" ,0.8),
+        new Horse('I', "Horse I" ,0.8),
+        new Horse('J', "Horse J" ,0.8),
+        new Horse('K', "Horse K" ,0.8),
+        new Horse('L', "Horse L" ,0.8),
+        new Horse('M', "Horse M" ,0.8),
+        new Horse('N', "Horse N" ,0.8),
+        new Horse('O', "Horse O" ,0.8),
+    }; 
+    private final static Horse[] horses = new Horse[15];
 
     public static void main(String[] args) {
         JTabbedPane tabs = new JTabbedPane();
@@ -26,7 +44,7 @@ public class guiMain {
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(tabs);
-        frame.setSize(800, 500);
+        frame.setSize(width, height);
         frame.setVisible(true);
     }
 
@@ -68,26 +86,61 @@ public class guiMain {
         JPanel contentPanel = new JPanel();
 
         //Add panels
-        contentPanel.add(idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15));
-        contentPanel.add(idElement("Track Length" ,"Track length", "length", trackLength, 5, 40));
+        JPanel laneCountElement = idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15, () -> {
+            if (raceTrack != null){
+                raceTrack.changeLaneCount(laneCount.value);
+            }
+        });
+        contentPanel.add(laneCountElement);
 
+        JPanel trackLengthElement = idElement("Track Length" ,"Track length", "length", trackLength, 5, 40, () -> {
+            if (raceTrack != null){
+                raceTrack.changeTrackLength(trackLength.value);
+            }
+        });
+        contentPanel.add(trackLengthElement);
+
+        JPanel laneSelectors = new JPanel();
+        laneSelectors.setLayout(new BoxLayout(laneSelectors, BoxLayout.Y_AXIS));
+        String[] horseNames = new String[availableHorses.length];
+
+        for (int i = 0; i < availableHorses.length; i++){
+            horseNames[i] = availableHorses[i].getName();
+        }
+
+        for (int i = 1; i <= laneCount.value; i ++){
+            JPanel laneSelector = laneSelector(i, horseNames);
+            laneSelectors.add(laneSelector);
+
+            System.out.println(i);
+        }
+
+        mainPanel.add(laneSelectors);
         mainPanel.add(contentPanel);
+
 
         return mainPanel;
     }
 
     public static JPanel racePanel(){
         JPanel panel = new JPanel();
+        panel.setLayout(null);
         panel.add(new JLabel("Race Start"));
 
         //Start Race
-        JButton startButton = Button("Start", 25, 25);
+        JButton startButton = Button("Start", 0, 25);
+        startButton.setSize(100, 50); // Set a fixed size for the button
+        startButton.setLocation((width - startButton.getWidth()) / 2, 25);
         
         startButton.addActionListener(e -> {
             startTheRace();
         });
 
         panel.add(startButton);
+
+        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value);
+
+        panel.add(raceTrack);
         
         return panel;
     }
@@ -98,7 +151,8 @@ public class guiMain {
         Race currentRace = new Race(trackLength.value, true);
 
         for (int i = 0; i < laneCount.value; i++) {
-            currentRace.addHorse(new Horse((char)(i + '0'), "Horse " + i,0.8));
+            System.out.println(i);
+            currentRace.addHorse(horses[i]);
         }
 
         currentRace.startRace();
@@ -113,8 +167,26 @@ public class guiMain {
         return button;
     }
 
+    private static JPanel laneSelector(int lane, String[] horseNames){
+        JPanel panel = new JPanel();
+        JLabel elementTitle = new JLabel("Lane " + lane);
+
+        JComboBox<String> laneSelector = new JComboBox<>(horseNames);
+        
+        laneSelector.addItemListener((ItemEvent arg0) -> {
+            horses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
+        });
+
+        laneSelector.setSelectedIndex(lane - 1);
+
+        panel.add(elementTitle);
+        panel.add(laneSelector);
+
+        return panel;
+    }
+
     //Increment / Decrement element
-    private static JPanel idElement(String title, String valueName, String displayName, valueContainer value, int min, int max){
+    private static JPanel idElement(String title, String valueName, String displayName, valueContainer value, int min, int max, passedFunction func){
         //Custom lane count
         JPanel valuePanel = new JPanel();
         JLabel elementTitle = new JLabel(title);
@@ -129,6 +201,7 @@ public class guiMain {
             if (value.value < max){
                 value.value++;
                 laneCountLabel.setText(displayName+": " + value.value);
+                func.execute();
             }
         });
 
@@ -138,7 +211,8 @@ public class guiMain {
         decrementButton.addActionListener(e -> {
             if (value.value > min){
                 value.value--;
-                laneCountLabel.setText(displayName+": " + value.value);   
+                laneCountLabel.setText(displayName+": " + value.value);
+                func.execute();   
             }
         });
 
@@ -160,4 +234,7 @@ class valueContainer{
     public valueContainer(int newValue) {
         value = newValue;
     }
+}
+interface passedFunction{
+    void execute();
 }
