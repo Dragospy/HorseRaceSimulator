@@ -1,4 +1,5 @@
 package Part1;
+import Part2.raceTrack;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +16,7 @@ public class Race
     private final ArrayList<Horse> horses;  
     private final boolean displayText;  
     private final char fallSymbol = '❌';
+    private raceTrack raceTrackGUI;
 
     /**
      * Constructor for objects of class Race
@@ -68,6 +70,7 @@ public class Race
      */
     public void startRace()
     {
+
         if (horses.isEmpty()){
             println("No horses, race cannot start!");
             return;
@@ -77,9 +80,10 @@ public class Race
         boolean finished = false; //declare a local variable to tell us when the race is finished
         
         //reset all the lanes (all horses not fallen and back to 0). 
-        for (Horse horse : horses) {
-            if (horse != null){
-                horse.goBackToStart();
+        for (int i = 0; i <  horses.size(); i++){
+            if (horses.get(i) != null){
+                (horses.get(i)).goBackToStart();
+                raceTrackGUI.updateHorse(i);
             }
         }
                       
@@ -87,9 +91,10 @@ public class Race
         {
             
             //move each horse
-            for (Horse horse: horses){
-                if (horse != null){
-                    moveHorse(horse);
+            for (int i = 0; i <  horses.size(); i++){
+                if (horses.get(i) != null){
+                    moveHorse(horses.get(i));
+                    raceTrackGUI.updateHorse(i);
                 }
             }
                         
@@ -135,6 +140,7 @@ public class Race
                 println("Error: " + e);
             }
         }
+
     }
     
     /**
@@ -276,6 +282,10 @@ public class Race
         }
 
         return false;
+    }
+
+    public void setRaceTrackGui(raceTrack raceTrackObject){
+        raceTrackGUI = raceTrackObject;
     }
 
      /**

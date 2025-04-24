@@ -9,7 +9,7 @@ public class guiMain {
     private final static int width = 1200;
     private final static valueContainer laneCount = new valueContainer(3);
     private final static valueContainer trackLength = new valueContainer(15);
-    private static raceTrack raceTrack = null;
+    private static raceTrack raceTrack;
     private final static Horse[] availableHorses = {
         new Horse('A', "Horse A" ,0.8),
         new Horse('B', "Horse B" ,0.8),
@@ -27,7 +27,7 @@ public class guiMain {
         new Horse('N', "Horse N" ,0.8),
         new Horse('O', "Horse O" ,0.8),
     }; 
-    private final static Horse[] horses = new Horse[15];
+    private final static Horse[] selectedHorses = new Horse[15];
 
     public static void main(String[] args) {
         JTabbedPane tabs = new JTabbedPane();
@@ -94,10 +94,6 @@ public class guiMain {
 
         //Add panels
         JPanel laneCountElement = idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15, () -> {
-            if (raceTrack != null){
-                raceTrack.changeLaneCount(laneCount.value);
-            }
-
             int count = laneSelectors.getComponentCount();
             if (count > laneCount.value) {
                 laneSelectors.remove(count - 1); // remove the last component
@@ -108,14 +104,16 @@ public class guiMain {
                 JPanel laneSelector = laneSelector(laneCount.value, horseNames);
                 laneSelectors.add(laneSelector);
             }
+
+            if (raceTrack != null){
+                raceTrack.changeLaneCount(laneCount.value);
+            }
         });
 
         JPanel trackLengthElement = idElement("Track Length" ,"Track length", "length", trackLength, 5, 40, () -> {
             if (raceTrack != null){
                 raceTrack.changeTrackLength(trackLength.value);
             }
-
-            
         });
 
         for (int i = 1; i <= laneCount.value; i ++){
@@ -129,7 +127,6 @@ public class guiMain {
         mainPanel.add(title);
         mainPanel.add(contentPanel);
         mainPanel.add(laneSelectors);
-
 
         return mainPanel;
     }
@@ -150,7 +147,7 @@ public class guiMain {
 
         panel.add(startButton);
 
-        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value);
+        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
 
         panel.add(raceTrack);
         
@@ -162,11 +159,19 @@ public class guiMain {
     public static void startTheRace(){
         Race currentRace = new Race(trackLength.value, true);
 
+        currentRace.setRaceTrackGui(raceTrack);
+
         for (int i = 0; i < laneCount.value; i++) {
-            currentRace.addHorse(horses[i]);
+            currentRace.addHorse(selectedHorses[i]);
         }
 
-        currentRace.startRace();
+        new Thread(() -> currentRace.startRace()).start(); 
+    }
+
+    public static void updateHorsePosition(int i){
+        if (raceTrack != null){
+            raceTrack.updateHorse(i);
+        }
     }
 
     //Elements
@@ -181,14 +186,16 @@ public class guiMain {
     private static JPanel laneSelector(int lane, String[] horseNames){
         JPanel panel = new JPanel();
         JLabel elementTitle = new JLabel("Lane " + lane);
-
         JComboBox<String> laneSelector = new JComboBox<>(horseNames);
         
         laneSelector.addItemListener((ItemEvent arg0) -> {
-            horses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
+            selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
+            if (raceTrack != null){
+                raceTrack.updateHorse(lane-1);
+            }
         });
 
-        horses[lane-1] = availableHorses[lane-1];
+        selectedHorses[lane-1] = availableHorses[lane-1];
         laneSelector.setSelectedIndex(lane - 1);
 
         panel.add(elementTitle);
@@ -202,13 +209,14 @@ public class guiMain {
         //Custom lane count
         JPanel valuePanel = new JPanel();
         JLabel elementTitle = new JLabel(title);
-        elementTitle.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         JLabel laneCountLabel = new JLabel(displayName+": " + value.value);
-        laneCountLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-
-        // Increments lane count by 1
         JButton incrementButton = Button("Increment " + valueName, 0, 0);
+        JButton decrementButton = Button("Decrement " + valueName, 0, 0);
+        elementTitle.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        laneCountLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         incrementButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        decrementButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
+        // Increments lane count by 1
         incrementButton.addActionListener(e -> {
             if (value.value < max){
                 value.value++;
@@ -218,8 +226,6 @@ public class guiMain {
         });
 
         // Decrements lane count by 1
-        JButton decrementButton = Button("Decrement " + valueName, 0, 0);
-        decrementButton.setAlignmentX(JButton.CENTER_ALIGNMENT);
         decrementButton.addActionListener(e -> {
             if (value.value > min){
                 value.value--;
