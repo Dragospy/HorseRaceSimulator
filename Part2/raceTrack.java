@@ -54,11 +54,13 @@ public class raceTrack extends JPanel{
 
     public void updateHorse(int horseIndex){
         JLabel horseChar = this.horseCharacters[horseIndex];
-        horseChar.setText(String.valueOf(this.selectedHorses[horseIndex].getSymbol()));
+        if (horseChar != null){
+            horseChar.setText(String.valueOf(this.selectedHorses[horseIndex].getSymbol()));
 
-        horseChar.setLocation(5 + 20 * this.selectedHorses[horseIndex].getDistanceTravelled(), horseChar.getY());
-        horseChar.repaint();     // refresh the label
-        this.repaint();          // refresh the panel
+            horseChar.setLocation(5 + 20 * this.selectedHorses[horseIndex].getDistanceTravelled(), horseChar.getY());
+            horseChar.repaint();     // refresh the label
+            this.repaint();          // refresh the panel
+        }
     }
 
     private void drawLane(int laneIndex, int yPos){
@@ -69,7 +71,7 @@ public class raceTrack extends JPanel{
         lane.setLocation(0, yPos);
 
         lanes[laneIndex] = lane;
-        
+
         JLabel currentHorseCharacter = new JLabel(String.valueOf(selectedHorses[laneIndex].getSymbol())); // <- use symbol, not name
         currentHorseCharacter.setOpaque(false); // allow background color to show
         currentHorseCharacter.setBounds(5, 0, 50, 50); // x, y, width, height
