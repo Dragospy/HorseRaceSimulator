@@ -56,11 +56,21 @@ public class raceTrack extends JPanel{
         JLabel horseChar = this.horseCharacters[horseIndex];
         if (horseChar != null){
             horseChar.setText(String.valueOf(this.selectedHorses[horseIndex].getSymbol()));
-
             horseChar.setLocation(5 + 20 * this.selectedHorses[horseIndex].getDistanceTravelled(), horseChar.getY());
+            horseChar.putClientProperty("index", horseIndex);
             horseChar.repaint();     // refresh the label
             this.repaint();          // refresh the panel
         }
+    }
+
+    public void updateHorseCustomization(int currentHorse){
+        for (int i = 0; i < laneCount; i++){
+            int currentHorseID = (int)(horseCharacters[i].getClientProperty("index"));
+            if ( currentHorseID == currentHorse){
+                updateHorse(i);
+            }
+        }
+
     }
 
     private void drawLane(int laneIndex, int yPos){
@@ -75,6 +85,7 @@ public class raceTrack extends JPanel{
         JLabel currentHorseCharacter = new JLabel(String.valueOf(selectedHorses[laneIndex].getSymbol())); // <- use symbol, not name
         currentHorseCharacter.setOpaque(false); // allow background color to show
         currentHorseCharacter.setBounds(5, 0, 50, 50); // x, y, width, height
+        currentHorseCharacter.putClientProperty("index", laneIndex);
 
         this.horseCharacters[laneIndex] = currentHorseCharacter;
         lane.add(currentHorseCharacter);

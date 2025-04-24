@@ -28,6 +28,7 @@ public class guiMain {
         new Horse('O', "Horse O" ,0.8),
     }; 
     private final static Horse[] selectedHorses = new Horse[15];
+    private static Horse currentHorse = null;
 
     public static void main(String[] args) {
         JTabbedPane tabs = new JTabbedPane();
@@ -70,7 +71,33 @@ public class guiMain {
     public static JPanel horseCustomization(){
         //Main panel setup
         JPanel mainPanel = new JPanel();
+        String[] horseNames = new String[availableHorses.length];
+        JPanel horseSelector = new JPanel();
+        JLabel elementTitle = new JLabel("Select Horse ");
+        currentHorse = availableHorses[0];
+
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+        for (int i = 0; i < availableHorses.length; i++){
+            horseNames[i] = availableHorses[i].getName();
+        }
+
+        JComboBox<String> laneSelector = new JComboBox<>(horseNames);
+
+        //Horse Selector
+        laneSelector.addItemListener((ItemEvent arg0) -> {
+            if (raceTrack != null){
+                currentHorse = availableHorses[laneSelector.getSelectedIndex()];
+                //raceTrack.updateHorseCustomization(laneSelector.getSelectedIndex());
+            }
+        });
+
+        laneSelector.setSelectedIndex(0);
+
+        horseSelector.add(elementTitle);
+        horseSelector.add(laneSelector);
+
+        mainPanel.add(horseSelector);
 
         return mainPanel;
     }
