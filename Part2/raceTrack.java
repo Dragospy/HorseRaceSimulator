@@ -10,7 +10,7 @@ public class raceTrack extends JPanel{
     private JPanel finishLine;
     private Horse[] selectedHorses;
     private JLabel[] horseCharacters = new JLabel[15];
-    private JPanel[] lanes = new JPanel[15];
+    private JLabel[] horseLabels = new JLabel[15];
 
     public raceTrack(int width, int laneCount, int yPos, int raceLength, Horse[] selectedHorses) {
         this.width = width;
@@ -56,10 +56,13 @@ public class raceTrack extends JPanel{
     public void updateHorse(int laneIndex){
         JLabel horseChar = this.horseCharacters[laneIndex];
         if (horseChar != null){
-            horseChar.setText(String.valueOf(this.selectedHorses[laneIndex].getSymbol()));
-            horseChar.setLocation(5 + 20 * this.selectedHorses[laneIndex].getDistanceTravelled(), horseChar.getY());
+            Horse currentHorse = this.selectedHorses[laneIndex];
+
+            horseChar.setText(String.valueOf(currentHorse.getSymbol()));
+            horseLabels[laneIndex].setText(currentHorse.getName() + " (Current confidence " + currentHorse.getConfidence() + ")" );
+            horseChar.setLocation(5 + 20 * currentHorse.getDistanceTravelled(), horseChar.getY());
             horseChar.putClientProperty("index", laneIndex);
-            horseChar.putClientProperty("name", this.selectedHorses[laneIndex].getName());
+            horseChar.putClientProperty("name", currentHorse.getName());
             horseChar.repaint();     // refresh the label
             this.repaint();          // refresh the panel
         }
@@ -86,23 +89,35 @@ public class raceTrack extends JPanel{
     }
 
     private void drawLane(int laneIndex, int yPos){
+        Horse currentHorse = selectedHorses[laneIndex];
+        JPanel laneContainer = new JPanel();
         JPanel lane = new JPanel();
+        JLabel currentHorseCharacter = new JLabel(String.valueOf(currentHorse.getSymbol()));
+        JLabel laneLabel = new JLabel(currentHorse.getName() + " (Current confidence " + currentHorse.getConfidence() + ")" );
+
+        laneContainer.setLayout(null);
+        laneContainer.setSize(width, 40);
+        laneContainer.setLocation(0, yPos);
+
         lane.setBackground(Color.gray);
-        lane.setSize(width, 40);
+        lane.setSize(width - 350, 40);
         lane.setLayout(null);
-        lane.setLocation(0, yPos);
+        lane.setLocation(0, 0);
 
-        lanes[laneIndex] = lane;
-
-        JLabel currentHorseCharacter = new JLabel(String.valueOf(selectedHorses[laneIndex].getSymbol())); // <- use symbol, not name
         currentHorseCharacter.setOpaque(false); // allow background color to show
         currentHorseCharacter.setBounds(5, 0, 50, 50); // x, y, width, height
         currentHorseCharacter.putClientProperty("index", laneIndex);
-        currentHorseCharacter.putClientProperty("name", this.selectedHorses[laneIndex].getName());
-
+        currentHorseCharacter.putClientProperty("name", currentHorse.getName());
         this.horseCharacters[laneIndex] = currentHorseCharacter;
-        lane.add(currentHorseCharacter);
 
-        this.add(lane);
+        laneLabel.setBounds(width - 325, 0, 300, 50);
+        horseLabels[laneIndex] = laneLabel;
+
+        lane.add(currentHorseCharacter);
+        laneContainer.add(lane);
+        laneContainer.add(laneLabel);
+    
+        this.add(laneContainer);
+
     }
 }

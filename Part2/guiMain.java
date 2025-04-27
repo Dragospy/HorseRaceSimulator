@@ -142,7 +142,7 @@ public class guiMain {
             laneSelectors.add(laneSelector);
         }
 
-        raceTrack = new raceTrack(width - 350, laneCount.value, 100, trackLength.value, selectedHorses);
+        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
 
         contentPanel.add(laneCountElement);
         contentPanel.add(trackLengthElement);
@@ -169,7 +169,6 @@ public class guiMain {
         });
 
         panel.add(startButton);
-
         panel.add(raceTrack);
         
         return panel;
