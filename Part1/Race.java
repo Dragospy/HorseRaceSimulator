@@ -113,19 +113,20 @@ public class Race
 
             //Figure out if a horse has won
             for (Horse horse : horses) {
-                if (horse != null && raceWonBy(horse)) {
+                if (horse != null && raceWonBy(horse) && !winners.contains(horse)) {
                     winners.add(horse);
                 }
             }
             
-            //if any of the three horses has won the race is finished
-            if ( !winners.isEmpty() )
+            //if any of the horses has won the race is finished
+            if (!horsesStillRacing() && !winners.isEmpty())
             {   
+                Horse winnerHorse = winners.get(0);
                 String message;
                 //Print the winner(s)
                 if (winners.size() > 1) {
-                    message = "It's a tie between: ";
-                    print("It's a tie between: ");
+                    message = "Our winners: ";
+                    print("Our winners: ");
                     int i = 0;
                     for (Horse horse : winners) {
                         print(horse.getName());
@@ -157,7 +158,7 @@ public class Race
 
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
-                        if (raceWonBy(horse)){
+                        if (horse.equals(winnerHorse)){
                             //Update the confidence of the horse to reflect their race outcome (aka we take it up)
                             horse.setConfidence(helperMethods.truncate(horse.getConfidence() + 0.1, 2));
                             horse.setCurrentRaceData(1, "win"); //Counted as win
@@ -168,7 +169,9 @@ public class Race
                             if (horse.hasFallen()){
                                 horse.setCurrentRaceData(2, "win"); //2 is counted as a fall
                             }
-                            horse.setCurrentRaceData(0, "win");//Counted as simply not finishing
+                            else{
+                                horse.setCurrentRaceData(0, "win");//Counted as simply not finishing
+                            }
                         }
 
                         //Saves the horse data and updates the GUI to reflect it
@@ -194,6 +197,7 @@ public class Race
                         raceTrackGUI.updateHorse(i);
                     }
 
+                    raceTrackGUI.raceFinished("noWinner", "All the horses have fallen");
                 }
             }
 
@@ -201,11 +205,10 @@ public class Race
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
                 for(Horse horse: horses){
-                    if (!horse.hasFallen()){
+                    if (!horse.hasFallen() && !raceWonBy(horse)){
                         //Add to the time the horse took to do race.
                         horse.setCurrentRaceData(horse.getCurrentRaceData()[1] + 0.1, "time");
                         horse.setCurrentRaceData(horse.getDistanceTravelled(), "speed");
-                        System.out.println(horse.getDistanceTravelled());
                     }
                 }
             }catch(InterruptedException e){
@@ -215,7 +218,7 @@ public class Race
 
         //Save horse distance travelled for this race
         for(Horse horse: horses){
-            if (!horse.hasFallen()){
+            if (raceTrackGUI != null){
                 helperMethods.saveRaceData(horse);
             }
         }
@@ -233,7 +236,7 @@ public class Race
     {
         //if the horse has fallen it cannot move, 
         //so only run if it has not fallen
-        if  (!theHorse.hasFallen())
+        if  (!theHorse.hasFallen() && !raceWonBy(theHorse))
         {
             //the probability that the horse will move forward depends on the confidence;
             if (Math.random() < theHorse.getConfidence())
@@ -361,6 +364,20 @@ public class Race
         }
 
         return false;
+    }
+
+    private boolean horsesStillRacing(){
+        int horseCount = horses.size();
+        for (Horse horse : horses){
+            if (horse.hasFallen()){
+                horseCount--;
+            }
+            else if(raceWonBy(horse)){
+                horseCount--;
+            }
+        }
+
+        return !(horseCount == 0);
     }
 
     public void setRaceTrackGui(raceTrack raceTrackObject){
