@@ -4,25 +4,19 @@ import java.io.*;
 import java.util.*;
 
 public class optionLoader {
-    private final String attributesFolder;
-    private final String accessoriesFolder;
+    private String optionFolder;
 
-    private final Map<String, List<String>> attributes = new LinkedHashMap<>();
-    private final Map<String, List<String>> accessories = new LinkedHashMap<>();
+    private final Map<String, List<String>> optionList = new LinkedHashMap<>();
 
-
-
-    public optionLoader() {
-        this.attributesFolder = "./Part2/assets/attributes";
-        this.accessoriesFolder = "./Part2/assets/accessories";
-        loadAttributes();
-        loadAccessories();
+    public optionLoader(String option) {
+        this.optionFolder = "./Part2/assets/"+option;
+        loadOption();
     }
 
-    private void loadAttributes() {
-        File folder = new File(attributesFolder);
+    private void loadOption() {
+        File folder = new File(optionFolder);
         if (!folder.exists() || !folder.isDirectory()) {
-            System.out.println("Attributes folder not found: " + attributesFolder);
+            System.out.println("Attributes folder not found: " + optionFolder);
             return;
         }
 
@@ -32,31 +26,11 @@ public class optionLoader {
             for (File file : files) {
                 if (file.isFile()) {
                     System.out.println(file.getName().replace(".txt", ""));
-                    attributes.put(file.getName().replace(".txt", ""), readOptions(file));
+                    optionList.put(file.getName().replace(".txt", ""), readOptions(file));
                 }
             }
         }
     }
-
-
-    private void loadAccessories() {
-        File folder = new File(accessoriesFolder);
-        if (!folder.exists() || !folder.isDirectory()) {
-            System.out.println("Accessories folder not found: " + accessoriesFolder);
-            return;
-        }
-
-        File[] files = folder.listFiles();
-        if (files != null) {
-            Arrays.sort(files, Comparator.comparing(File::getName)); // Sort alphabetically by filename
-            for (File file : files) {
-                if (file.isFile()) {
-                    accessories.put(file.getName().replace(".txt", ""), readOptions(file));
-                }
-            }
-        }
-    }
-
 
     private List<String> readOptions(File file) {
         List<String> options = new ArrayList<>();
@@ -74,19 +48,13 @@ public class optionLoader {
         return options;
     }
 
-    public Map<String, List<String>> getAttributes() {
-        return attributes;
+    public Map<String, List<String>> getOptions() {
+        return optionList;
     }
 
-    public Map<String, List<String>> getAccessories() {
-        return accessories;
+
+    public List<String> getOptionTypes() {
+    return new ArrayList<>(optionList.keySet());
     }
 
-    public List<String> getAttributeTypes() {
-    return new ArrayList<>(attributes.keySet());
-    }
-
-    public List<String> getAccessoryTypes() {
-        return new ArrayList<>(accessories.keySet());
-    }
 }

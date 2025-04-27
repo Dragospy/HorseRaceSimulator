@@ -79,6 +79,10 @@ public class raceTrack extends JPanel{
 
     }
 
+    public void setCondition(String condition){
+        
+    }
+
     public void raceFinished(String type, String message){
         if (type.equals("noWinner")){
             JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);

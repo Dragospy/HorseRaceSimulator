@@ -14,12 +14,14 @@ public class guiMain {
     private final static valueContainer trackLength = new valueContainer(15);
     private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
+    private static String[] trackConditions;
     private static Horse currentHorse = null;
     private static Race currentRace = null;
     private static raceTrack raceTrack;
 
     public static void main(String[] args) {
         loadHorses();
+        loadExtras();
 
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Track Setup", trackPanel());
@@ -137,6 +139,8 @@ public class guiMain {
             }
         });
 
+        JPanel trackConditionElemenet = trackConditionSelector(trackConditions);
+
         for (int i = 1; i <= laneCount.value; i ++){
             JPanel laneSelector = laneSelector(i, horseNames);
             laneSelectors.add(laneSelector);
@@ -146,6 +150,7 @@ public class guiMain {
 
         contentPanel.add(laneCountElement);
         contentPanel.add(trackLengthElement);
+        contentPanel.add(trackConditionElemenet);
 
         mainPanel.add(title);
         mainPanel.add(contentPanel);
@@ -180,7 +185,8 @@ public class guiMain {
         databaseHandler horseData = new databaseHandler("./Part2/database/horses.csv");
         databaseHandler horseAttributes= new databaseHandler("./Part2/database/attributes.csv");
         databaseHandler horseAccessories = new databaseHandler("./Part2/database/accessories.csv");
-        optionLoader loader = new optionLoader();   
+        optionLoader attributes = new optionLoader("attributes");   
+        optionLoader accessories = new optionLoader("accessories");   
         
         List<List<String>> records = horseData.readAll();
         List<List<String>> allAttributes = horseAttributes.readAll();
@@ -188,23 +194,30 @@ public class guiMain {
         int counter = 0;
 
         for (List<String> record : records) {
-            Map<String, String> attributes = new LinkedHashMap<>();
+            Map<String, String> attributesMap = new LinkedHashMap<>();
             int attributeCount = 1;
-            for (String attribute: loader.getAttributeTypes()){
-                attributes.put(attribute, (allAttributes.get(counter)).get(attributeCount));
+            for (String attribute: attributes.getOptionTypes()){
+                attributesMap.put(attribute, (allAttributes.get(counter)).get(attributeCount));
                 attributeCount++;
             }
 
-            Map<String, String> accessories = new LinkedHashMap<>();
+            Map<String, String> accessoriesMap = new LinkedHashMap<>();
             int accessoryCount = 1;
-            for (String accessory: loader.getAccessoryTypes()){
-                accessories.put(accessory, (allAccessories.get(counter)).get(accessoryCount));
+            for (String accessory: accessories.getOptionTypes()){
+                accessoriesMap.put(accessory, (allAccessories.get(counter)).get(accessoryCount));
                 accessoryCount++;
             }
 
-            availableHorses[counter] = new Horse(record.get(0), record.get(1), Double.parseDouble(record.get(2)), attributes, accessories);
+            availableHorses[counter] = new Horse(record.get(0), record.get(1), Double.parseDouble(record.get(2)), attributesMap, accessoriesMap);
             counter++;
         }
+    }
+
+    public static void loadExtras(){
+        optionLoader loader = new optionLoader("track");
+
+        trackConditions = ((loader.getOptions()).get("conditions")).toArray(new String[0]);
+
     }
 
     public static void startTheRace(){
@@ -262,6 +275,26 @@ public class guiMain {
 
         panel.add(elementTitle);
         panel.add(laneSelector);
+
+        return panel;
+    }
+
+    private static JPanel trackConditionSelector(String[] trackConditionOptions){
+        JPanel panel = new JPanel();
+        JLabel elementTitle = new JLabel("Track Conditions");
+        JComboBox<String> conditionSelector = new JComboBox<>(trackConditionOptions);
+
+        elementTitle.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        conditionSelector.setAlignmentX(JComboBox.CENTER_ALIGNMENT);
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        
+        conditionSelector.addItemListener((ItemEvent item) -> {
+            raceTrack.setCondition((String) item.getItem());
+        });
+
+        panel.add(elementTitle);
+        panel.add(conditionSelector);
 
         return panel;
     }

@@ -15,7 +15,8 @@ public class customizationPanel extends JPanel{
     public customizationPanel(Horse selectedHorse, raceTrack currentTrack, int horseIndex) {
         this.accessories = null;
         this.currentHorse = selectedHorse;
-        optionLoader loader = new optionLoader(); 
+        optionLoader attributesLoader = new optionLoader("attributes"); 
+        optionLoader accessoriesLoader= new optionLoader("accessories"); 
         JPanel attributesPanel = new JPanel();
         JPanel accessoryPanel = new JPanel();
 
@@ -41,8 +42,8 @@ public class customizationPanel extends JPanel{
             }
         });
 
-        loadAttributes(loader);
-        loadAcessories(loader);   
+        loadAttributes(attributesLoader);
+        loadAcessories(accessoriesLoader);   
 
         loadSelectors(attributesPanel, attributes, currentTrack, horseIndex, "attribute");
         loadSelectors(accessoryPanel, accessories, currentTrack, horseIndex, "accessory");
@@ -96,11 +97,11 @@ public class customizationPanel extends JPanel{
     }
 
     public void loadAttributes(optionLoader loader){
-        attributes = loader.getAttributes();
+        attributes = loader.getOptions();
     }
 
     public void loadAcessories(optionLoader loader){
-        accessories = loader.getAccessories();
+        accessories = loader.getOptions();
     }
 
 
