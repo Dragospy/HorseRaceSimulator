@@ -1,5 +1,5 @@
 package Part1;
-import Part2.raceTrack;
+import Part2.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -144,11 +144,38 @@ public class Race
                     }
                 }
 
+                if (raceTrackGUI != null){
+
+                    for (int i = 0; i < horses.size(); i++){
+                        Horse horse = horses.get(i);
+                        if (raceWonBy(horse)){
+                            horse.setConfidence(horse.getConfidence() + 0.1);
+                        }
+                        else{
+                            horse.setConfidence(horse.getConfidence() - 0.1);
+                        }
+
+                        helperMethods.saveHorse(horse);
+                        raceTrackGUI.updateHorse(i);
+                    }
+
+                }
+
                 finished = true;
             }
 
             if (haveAllFallen()) {
                 finished = true;
+                if (raceTrackGUI != null){
+                    for (int i = 0; i < horses.size(); i++){
+                        Horse horse = horses.get(i);
+                        horse.setConfidence(horse.getConfidence() - 0.1);
+
+                        helperMethods.saveHorse(horse);
+                        raceTrackGUI.updateHorse(i);
+                    }
+
+                }
             }
            
             //wait for 100 milliseconds

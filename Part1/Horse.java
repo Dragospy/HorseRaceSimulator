@@ -32,8 +32,8 @@ public class Horse
         if (horseConfidence <= 0){
             this.confidence = 0.1;  //Horse's confidence cannot be negative
         }
-        else if (horseConfidence > 1){
-            this.confidence = 1;  //Horse's confidence cannot be greater than 1
+        else if (horseConfidence >= 1){
+            this.confidence = 0.9;  //Horse's confidence cannot be greater than 1
         }
         else{
             this.confidence = horseConfidence;  //new confidence is between 0 and 1 so we set it as the actual confidence
@@ -114,8 +114,8 @@ public class Horse
         if (newConfidence <= 0){
             this.confidence = 0.1;  //Horse's confidence cannot be negative
         }
-        else if (newConfidence > 1){
-            this.confidence = 1;  //Horse's confidence cannot be greater than 1
+        else if (newConfidence >= 1){
+            this.confidence = 0.9;  //Horse's confidence cannot be greater than 1
         }
         else{
             confidence = newConfidence;  //new confidence is between 0 and 1 so we set it as the actual confidence

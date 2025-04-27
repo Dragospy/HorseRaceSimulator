@@ -80,7 +80,7 @@ public class raceTrack extends JPanel{
     }
 
     public void setCondition(String condition){
-        
+
     }
 
     public void raceFinished(String type, String message){
