@@ -58,6 +58,8 @@ public class guiMain {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
+
+
         return mainPanel;
     }
 
@@ -278,7 +280,6 @@ public class guiMain {
         laneSelector.addItemListener((ItemEvent item) -> {
             selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
             if (raceTrack != null){
-                System.out.println(laneSelector.getSelectedIndex());
                 raceTrack.updateHorse(lane-1);
             }
         });

@@ -25,7 +25,6 @@ public class optionLoader {
             Arrays.sort(files, Comparator.comparing(File::getName)); // Sort alphabetically by filename
             for (File file : files) {
                 if (file.isFile()) {
-                    System.out.println(file.getName().replace(".txt", ""));
                     optionList.put(file.getName().replace(".txt", ""), readOptions(file));
                 }
             }

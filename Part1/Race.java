@@ -136,11 +136,14 @@ public class Race
                         }
                         i++;
                     }
+
+                    //We let the GUI know there has been no winner, and a tie has happened, though this will be counted as a win for each horse
                     if (raceTrackGUI != null){
                         raceTrackGUI.raceFinished("noWinner", message);
                     }
                     
                 } else {
+                    //We let the GUI know there has been a winner, and send it to be displayed and end the race
                     message = "The winner is... " + (winners.get(0)).getName() + "!";
                     println(message);
                     if (raceTrackGUI != null){
@@ -148,17 +151,27 @@ public class Race
                     }
                 }
 
+
+                //These are GUI specific parts of the code, so we need the gui to be active
                 if (raceTrackGUI != null){
 
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
                         if (raceWonBy(horse)){
+                            //Update the confidence of the horse to reflect their race outcome (aka we take it up)
                             horse.setConfidence(helperMethods.truncate(horse.getConfidence() + 0.1, 2));
+                            horse.setCurrentRaceData(1, "win"); //Counted as win
                         }
                         else{
+                            //We update the confidence of the horse to reflect their race outcome (aka we take it down)
                             horse.setConfidence(helperMethods.truncate(horse.getConfidence() - 0.1, 2));
+                            if (horse.hasFallen()){
+                                horse.setCurrentRaceData(2, "win"); //2 is counted as a fall
+                            }
+                            horse.setCurrentRaceData(0, "win");//Counted as simply not finishing
                         }
 
+                        //Saves the horse data and updates the GUI to reflect it
                         helperMethods.saveHorse(horse);
                         raceTrackGUI.updateHorse(i);
                     }
@@ -168,8 +181,10 @@ public class Race
                 finished = true;
             }
 
+            //Checks if all the horses have fallen, if they have, then we can end the race
             if (haveAllFallen()) {
                 finished = true;
+                //If we are using the gui version, we can also update horse stats
                 if (raceTrackGUI != null){
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
@@ -181,12 +196,27 @@ public class Race
 
                 }
             }
-           
+
             //wait for 100 milliseconds
             try{ 
                 TimeUnit.MILLISECONDS.sleep(100);
+                for(Horse horse: horses){
+                    if (!horse.hasFallen()){
+                        //Add to the time the horse took to do race.
+                        horse.setCurrentRaceData(horse.getCurrentRaceData()[1] + 0.1, "time");
+                        horse.setCurrentRaceData(horse.getDistanceTravelled(), "speed");
+                        System.out.println(horse.getDistanceTravelled());
+                    }
+                }
             }catch(InterruptedException e){
                 println("Error: " + e);
+            }
+        }
+
+        //Save horse distance travelled for this race
+        for(Horse horse: horses){
+            if (!horse.hasFallen()){
+                helperMethods.saveRaceData(horse);
             }
         }
 

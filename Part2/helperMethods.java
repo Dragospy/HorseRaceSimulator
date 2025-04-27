@@ -3,6 +3,7 @@ package Part2;
 import Part1.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class helperMethods {
     public static String formatWord(String input) {
@@ -53,6 +54,39 @@ public class helperMethods {
 
         horseAccessories.updateIf(0, horse.getName(), accessoryValues);
 
+    }
+
+    public static void saveRaceData(Horse horse){
+        databaseHandler horseData = new databaseHandler("./Part2/database/horseRaceData.csv");
+        List<String> data = new ArrayList<>();
+        double[] horseRaceData = horse.getCurrentRaceData();
+
+        System.out.println(horseRaceData[0] + " " + horseRaceData[1]);
+
+        data.add(horse.getName());
+
+        double averageSpeed = truncate((horseRaceData[0]/horseRaceData[1]), 2);
+        data.add(String.valueOf(averageSpeed));
+
+
+        if (horse.hasFallen()){
+            data.add("DNF");
+        }
+        else{
+            data.add(String.valueOf(truncate(horseRaceData[1], 2)));
+        }
+        
+        if (horseRaceData[2] == 0){
+            data.add("LOST");
+        }
+        else if (horseRaceData[2] == 1){
+            data.add("WON");
+        }
+        else if (horseRaceData[2] == 2){
+            data.add("FELL OVER");
+        }
+        
+        horseData.insert(data);
     }
 
     public static double truncate(double value, int decimalPlaces) {

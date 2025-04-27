@@ -106,6 +106,4 @@ public class customizationPanel extends JPanel{
         accessories = loader.getOptions();
     }
 
-
-
 }

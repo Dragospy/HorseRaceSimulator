@@ -19,6 +19,7 @@ public class Horse
     private int distanceTravelled = 0;
     private Map<String, String> horseAttributes = new HashMap<>();
     private Map<String, String> horseAccessories = new HashMap<>();
+    private double[] currentRaceData = {0,0,0};
       
     //Constructor of class Horse
     /**
@@ -120,6 +121,26 @@ public class Horse
         else{
             confidence = newConfidence;  //new confidence is between 0 and 1 so we set it as the actual confidence
         }
+    }
+
+    public void setCurrentRaceData(double property, String type){
+        switch (type) {
+            case "speed":
+                this.currentRaceData[0] = property;
+                break;
+            case "time":
+                this.currentRaceData[1] = property;
+                break;
+            case "win":
+                this.currentRaceData[2] = property;
+                break;
+            default:
+                break;
+        }
+    }
+
+    public double[] getCurrentRaceData(){
+        return this.currentRaceData;
     }
     
     public void setSymbol(String newSymbol)
