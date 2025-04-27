@@ -219,7 +219,7 @@ public class Race
         //Save horse distance travelled for this race
         for(Horse horse: horses){
             if (raceTrackGUI != null){
-                helperMethods.saveRaceData(horse);
+                helperMethods.saveRaceData(horse, raceTrackGUI.getConditionLabel());
             }
         }
 

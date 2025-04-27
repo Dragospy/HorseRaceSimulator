@@ -58,7 +58,7 @@ public class guiMain {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-
+        mainPanel.add(new statisticsPanel());
 
         return mainPanel;
     }

@@ -56,7 +56,7 @@ public class helperMethods {
 
     }
 
-    public static void saveRaceData(Horse horse){
+    public static void saveRaceData(Horse horse, String condition){
         databaseHandler horseData = new databaseHandler("./Part2/database/horseRaceData.csv");
         List<String> data = new ArrayList<>();
         double[] horseRaceData = horse.getCurrentRaceData();
@@ -85,6 +85,8 @@ public class helperMethods {
         else if (horseRaceData[2] == 2){
             data.add("FELL OVER");
         }
+
+        data.add(condition);
         
         horseData.insert(data);
     }
