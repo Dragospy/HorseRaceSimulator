@@ -58,8 +58,11 @@ public class raceTrack extends JPanel{
         JLabel horseChar = this.horseCharacters[laneIndex];
         if (horseChar != null){
             Horse currentHorse = this.selectedHorses[laneIndex];
-
-            horseChar.setText(String.valueOf(currentHorse.getSymbol()));
+            if (currentHorse.hasFallen()){
+                horseChar.setText("❌");
+            }else{
+                horseChar.setText(String.valueOf(currentHorse.getSymbol()));
+            }
             horseLabels[laneIndex].setText(currentHorse.getName() + " (Current confidence " + currentHorse.getConfidence() + ")" );
             horseChar.setLocation(5 + 20 * currentHorse.getDistanceTravelled(), horseChar.getY());
             horseChar.putClientProperty("index", laneIndex);
