@@ -84,7 +84,9 @@ public class Race
         for (int i = 0; i <  horses.size(); i++){
             if (horses.get(i) != null){
                 (horses.get(i)).goBackToStart();
-                raceTrackGUI.updateHorse(i);
+                if (raceTrackGUI != null){
+                    raceTrackGUI.updateHorse(i);
+                }
             }
         }
                       
@@ -95,7 +97,9 @@ public class Race
             for (int i = 0; i <  horses.size(); i++){
                 if (horses.get(i) != null){
                     moveHorse(horses.get(i));
-                    raceTrackGUI.updateHorse(i);
+                    if (raceTrackGUI != null){
+                        raceTrackGUI.updateHorse(i);
+                    }
                 }
             }
                         
@@ -127,12 +131,16 @@ public class Race
                         }
                         i++;
                     }
-
-                    raceTrackGUI.raceFinished("noWinner", message);
+                    if (raceTrackGUI != null){
+                        raceTrackGUI.raceFinished("noWinner", message);
+                    }
+                    
                 } else {
                     message = "The winner is... " + (winners.get(0)).getName() + "!";
-                    println("The winner is... " + (winners.get(0)).getName() + "!");
-                    raceTrackGUI.raceFinished("winner", message);
+                    println(message);
+                    if (raceTrackGUI != null){
+                        raceTrackGUI.raceFinished("winner", message);
+                    }
                 }
 
                 finished = true;
