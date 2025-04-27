@@ -74,6 +74,7 @@ public class Race
 
         if (horses.isEmpty()){
             println("No horses, race cannot start!");
+            finished = true;
             return;
         }
 
@@ -124,7 +125,7 @@ public class Race
                     int i = 0;
                     for (Horse horse : winners) {
                         print(horse.getName());
-                        message = horse.getName();
+                        message += horse.getName();
                         if (i < winners.size() - 1) {
                             print(", ");
                             message += ", ";
