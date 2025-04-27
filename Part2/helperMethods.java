@@ -55,4 +55,9 @@ public class helperMethods {
 
     }
 
+    public static double truncate(double value, int decimalPlaces) {
+        double factor = Math.pow(10, decimalPlaces);
+        return Math.floor(value * factor) / factor;
+    }
+
 }

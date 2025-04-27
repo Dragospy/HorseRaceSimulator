@@ -11,10 +11,12 @@ public class customizationPanel extends JPanel{
     private Horse currentHorse = null;
     private Map<String, List<String>> attributes;
     private Map<String, List<String>> accessories;
+    private Race currentRace;
 
-    public customizationPanel(Horse selectedHorse, raceTrack currentTrack, int horseIndex) {
+    public customizationPanel(Horse selectedHorse, raceTrack currentTrack, int horseIndex, Race currentRace) {
         this.accessories = null;
         this.currentHorse = selectedHorse;
+        this.currentRace = currentRace;
         optionLoader attributesLoader = new optionLoader("attributes"); 
         optionLoader accessoriesLoader= new optionLoader("accessories"); 
         JPanel attributesPanel = new JPanel();

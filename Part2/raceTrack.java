@@ -12,11 +12,14 @@ public class raceTrack extends JPanel{
     private JLabel[] horseCharacters = new JLabel[15];
     private JLabel[] horseLabels = new JLabel[15];
     private double conditionMultiplier = 1;
+    private String conditionLabel = "normal";
+    private JTabbedPane tabs;
 
-    public raceTrack(int width, int laneCount, int yPos, int raceLength, Horse[] selectedHorses) {
+    public raceTrack(int width, int laneCount, int yPos, int raceLength, Horse[] selectedHorses, JTabbedPane tabs) {
         this.width = width;
         this.laneCount = laneCount;
         this.selectedHorses = selectedHorses;
+        this.tabs = tabs;
 
         setSize(width, 40 * laneCount);
         setLocation(0, yPos);
@@ -83,12 +86,20 @@ public class raceTrack extends JPanel{
 
     }
 
-    public void setCondition(Double mutiplier){
+    public void setConditionMultiplier(Double mutiplier){
         this.conditionMultiplier = mutiplier;
     }
 
-    public Double getCondition(){
+    public Double getConditionMultiplier(){
         return this.conditionMultiplier;
+    }
+
+    public void setConditionLabel(String label){
+        this.conditionLabel = label;
+    }
+
+    public String getConditionLabel(){
+        return this.conditionLabel;
     }
 
     public void raceFinished(String type, String message){
@@ -98,6 +109,8 @@ public class raceTrack extends JPanel{
         else if (type.equals("winner")) {
             JOptionPane.showMessageDialog(null, message, "Success", JOptionPane.OK_CANCEL_OPTION);
         }
+
+        tabs.setEnabled(true);
     }
 
     private void drawLane(int laneIndex, int yPos){

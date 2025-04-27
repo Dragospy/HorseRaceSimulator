@@ -18,12 +18,13 @@ public class guiMain {
     private static Horse currentHorse = null;
     private static Race currentRace = null;
     private static raceTrack raceTrack;
+    private static JTabbedPane tabs;
 
     public static void main(String[] args) {
         loadHorses();
         loadExtras();
 
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         tabs.addTab("Track Setup", trackPanel());
         tabs.addTab("Horse Customization", horseCustomization());
         tabs.addTab("Race Stats", statistics());
@@ -65,7 +66,7 @@ public class guiMain {
         JPanel mainPanel = new JPanel();
         String[] horseNames = new String[availableHorses.length];
         JPanel horseSelectorPanel = new JPanel();
-        JPanel customizationPanel = new customizationPanel(availableHorses[0], raceTrack, 0);
+        JPanel customizationPanel = new customizationPanel(availableHorses[0], raceTrack, 0, currentRace);
         JLabel selectorTitle = new JLabel("Select Horse ");
         currentHorse = availableHorses[0];
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -79,13 +80,11 @@ public class guiMain {
         JComboBox<String> horseSelector = new JComboBox<>(horseNames);
         
         horseSelector.addItemListener((ItemEvent item) -> {
-            if (raceTrack != null){
-                currentHorse = availableHorses[horseSelector.getSelectedIndex()];
-                mainPanel.remove(mainPanel.getComponentCount() - 1);
-                mainPanel.add(new customizationPanel(availableHorses[horseSelector.getSelectedIndex()], raceTrack, horseSelector.getSelectedIndex()));
-                mainPanel.revalidate();      // re-layout the panel
-                mainPanel.repaint();         // repaint the UI
-            }
+            currentHorse = availableHorses[horseSelector.getSelectedIndex()];
+            mainPanel.remove(mainPanel.getComponentCount() - 1);
+            mainPanel.add(new customizationPanel(availableHorses[horseSelector.getSelectedIndex()], raceTrack, horseSelector.getSelectedIndex(), currentRace));
+            mainPanel.revalidate();      // re-layout the panel
+            mainPanel.repaint();         // repaint the UI
         });
         
         horseSelector.setSelectedIndex(0);
@@ -114,7 +113,6 @@ public class guiMain {
             horseNames[i] = availableHorses[i].getName();
         }
 
-
         //Add panels
         JPanel laneCountElement = idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15, () -> {
             int count = laneSelectors.getComponentCount();
@@ -127,7 +125,6 @@ public class guiMain {
                 JPanel laneSelector = laneSelector(laneCount.value, horseNames);
                 laneSelectors.add(laneSelector);
             }
-
             if (raceTrack != null){
                 raceTrack.changeLaneCount(laneCount.value);
             }
@@ -153,7 +150,7 @@ public class guiMain {
             laneSelectors.add(laneSelector);
         }
 
-        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
+        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses, tabs);
 
         contentPanel.add(laneCountElement);
         contentPanel.add(trackLengthElement);
@@ -234,7 +231,7 @@ public class guiMain {
 
     public static void startTheRace(){
         if (currentRace != null && currentRace.isFinished()){
-            currentRace = new Race(trackLength.value, true);
+            currentRace = new Race(trackLength.value, false);
 
             currentRace.setRaceTrackGui(raceTrack);
 
@@ -243,12 +240,14 @@ public class guiMain {
             }
 
             new Thread(() -> currentRace.startRace()).start(); 
+
+            tabs.setEnabled(false);
         }
         else if (currentRace != null && !currentRace.isFinished()){
             JOptionPane.showMessageDialog(null, "A race is already ongoing", "Error", JOptionPane.WARNING_MESSAGE);
         }
         else if (currentRace == null){
-            currentRace = new Race(trackLength.value, true);
+            currentRace = new Race(trackLength.value, false);
 
             currentRace.setRaceTrackGui(raceTrack);
 
@@ -257,6 +256,8 @@ public class guiMain {
             }
 
             new Thread(() -> currentRace.startRace()).start(); 
+
+            tabs.setEnabled(false);
         }
     }
 
@@ -302,7 +303,8 @@ public class guiMain {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         
         conditionSelector.addItemListener((ItemEvent item) -> {
-            raceTrack.setCondition(trackConditions.get(((String) item.getItem())));
+            raceTrack.setConditionMultiplier(trackConditions.get(((String) item.getItem())));
+            raceTrack.setConditionLabel((String) item.getItem());
         });
 
         panel.add(elementTitle);

@@ -73,7 +73,7 @@ public class Race
     public void startRace()
     {
         if (raceTrackGUI != null){
-            multiplier = raceTrackGUI.getCondition();
+            multiplier = raceTrackGUI.getConditionMultiplier();
         }
 
         if (horses.isEmpty()){
@@ -153,10 +153,10 @@ public class Race
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
                         if (raceWonBy(horse)){
-                            horse.setConfidence(horse.getConfidence() + 0.1);
+                            horse.setConfidence(helperMethods.truncate(horse.getConfidence() + 0.1, 2));
                         }
                         else{
-                            horse.setConfidence(horse.getConfidence() - 0.1);
+                            horse.setConfidence(helperMethods.truncate(horse.getConfidence() - 0.1, 2));
                         }
 
                         helperMethods.saveHorse(horse);
@@ -173,7 +173,7 @@ public class Race
                 if (raceTrackGUI != null){
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
-                        horse.setConfidence(horse.getConfidence() - 0.1);
+                        horse.setConfidence(helperMethods.truncate(horse.getConfidence() - 0.1, 2));
 
                         helperMethods.saveHorse(horse);
                         raceTrackGUI.updateHorse(i);
