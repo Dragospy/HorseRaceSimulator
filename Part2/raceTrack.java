@@ -76,6 +76,15 @@ public class raceTrack extends JPanel{
 
     }
 
+    public void raceFinished(String type, String message){
+        if (type.equals("noWinner")){
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else if (type.equals("winner")) {
+            JOptionPane.showMessageDialog(null, message, "Success", JOptionPane.OK_CANCEL_OPTION);
+        }
+    }
+
     private void drawLane(int laneIndex, int yPos){
         JPanel lane = new JPanel();
         lane.setBackground(Color.gray);

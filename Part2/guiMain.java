@@ -15,6 +15,7 @@ public class guiMain {
     private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
     private static Horse currentHorse = null;
+    private static Race currentRace = null;
     private static raceTrack raceTrack;
 
     public static void main(String[] args) {
@@ -141,7 +142,7 @@ public class guiMain {
             laneSelectors.add(laneSelector);
         }
 
-        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
+        raceTrack = new raceTrack(width - 350, laneCount.value, 100, trackLength.value, selectedHorses);
 
         contentPanel.add(laneCountElement);
         contentPanel.add(trackLengthElement);
@@ -208,15 +209,31 @@ public class guiMain {
     }
 
     public static void startTheRace(){
-        Race currentRace = new Race(trackLength.value, true);
+        if (currentRace != null && currentRace.isFinished()){
+            currentRace = new Race(trackLength.value, true);
 
-        currentRace.setRaceTrackGui(raceTrack);
+            currentRace.setRaceTrackGui(raceTrack);
 
-        for (int i = 0; i < laneCount.value; i++) {
-            currentRace.addHorse(selectedHorses[i]);
+            for (int i = 0; i < laneCount.value; i++) {
+                currentRace.addHorse(selectedHorses[i]);
+            }
+
+            new Thread(() -> currentRace.startRace()).start(); 
         }
+        else if (currentRace != null && !currentRace.isFinished()){
+            JOptionPane.showMessageDialog(null, "A race is already ongoing", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+        else if (currentRace == null){
+            currentRace = new Race(trackLength.value, true);
 
-        new Thread(() -> currentRace.startRace()).start(); 
+            currentRace.setRaceTrackGui(raceTrack);
+
+            for (int i = 0; i < laneCount.value; i++) {
+                currentRace.addHorse(selectedHorses[i]);
+            }
+
+            new Thread(() -> currentRace.startRace()).start(); 
+        }
     }
 
     //Elements

@@ -16,6 +16,7 @@ public class Race
     private final ArrayList<Horse> horses;  
     private final boolean displayText;  
     private final char fallSymbol = '❌';
+    private boolean finished = false;
     private raceTrack raceTrackGUI;
 
     /**
@@ -77,7 +78,7 @@ public class Race
         }
 
         ArrayList<Horse> winners = new ArrayList<>();
-        boolean finished = false; //declare a local variable to tell us when the race is finished
+        finished = false; //declare a local variable to tell us when the race is finished
         
         //reset all the lanes (all horses not fallen and back to 0). 
         for (int i = 0; i <  horses.size(); i++){
@@ -110,20 +111,28 @@ public class Race
             
             //if any of the three horses has won the race is finished
             if ( !winners.isEmpty() )
-            {
+            {   
+                String message;
                 //Print the winner(s)
                 if (winners.size() > 1) {
+                    message = "It's a tie between: ";
                     print("It's a tie between: ");
                     int i = 0;
                     for (Horse horse : winners) {
                         print(horse.getName());
+                        message = horse.getName();
                         if (i < winners.size() - 1) {
                             print(", ");
+                            message += ", ";
                         }
                         i++;
                     }
+
+                    raceTrackGUI.raceFinished("noWinner", message);
                 } else {
+                    message = "The winner is... " + (winners.get(0)).getName() + "!";
                     println("The winner is... " + (winners.get(0)).getName() + "!");
+                    raceTrackGUI.raceFinished("winner", message);
                 }
 
                 finished = true;
@@ -286,6 +295,10 @@ public class Race
 
     public void setRaceTrackGui(raceTrack raceTrackObject){
         raceTrackGUI = raceTrackObject;
+    }
+
+    public boolean isFinished(){
+        return this.finished;
     }
 
      /**
