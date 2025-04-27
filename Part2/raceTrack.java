@@ -11,6 +11,7 @@ public class raceTrack extends JPanel{
     private Horse[] selectedHorses;
     private JLabel[] horseCharacters = new JLabel[15];
     private JLabel[] horseLabels = new JLabel[15];
+    private double conditionMultiplier = 1;
 
     public raceTrack(int width, int laneCount, int yPos, int raceLength, Horse[] selectedHorses) {
         this.width = width;
@@ -79,8 +80,12 @@ public class raceTrack extends JPanel{
 
     }
 
-    public void setCondition(String condition){
+    public void setCondition(Double mutiplier){
+        this.conditionMultiplier = mutiplier;
+    }
 
+    public Double getCondition(){
+        return this.conditionMultiplier;
     }
 
     public void raceFinished(String type, String message){

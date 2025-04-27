@@ -18,6 +18,7 @@ public class Race
     private final char fallSymbol = '❌';
     private boolean finished = false;
     private raceTrack raceTrackGUI;
+    private Double multiplier = 1.0;
 
     /**
      * Constructor for objects of class Race
@@ -71,6 +72,9 @@ public class Race
      */
     public void startRace()
     {
+        if (raceTrackGUI != null){
+            multiplier = raceTrackGUI.getCondition();
+        }
 
         if (horses.isEmpty()){
             println("No horses, race cannot start!");
@@ -210,7 +214,7 @@ public class Race
             //the probability that the horse will fall is very small (max is 0.1)
             //but will also will depends exponentially on confidence 
             //so if you double the confidence, the probability that it will fall is *2
-            if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()))
+            if (Math.random() < (0.1*theHorse.getConfidence()*theHorse.getConfidence()) * multiplier)
             {
                 theHorse.fall();
             }

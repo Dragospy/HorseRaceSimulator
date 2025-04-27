@@ -1,3 +1,3 @@
-metal
-leather
 wood
+leather
+metal

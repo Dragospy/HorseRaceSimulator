@@ -14,7 +14,7 @@ public class guiMain {
     private final static valueContainer trackLength = new valueContainer(15);
     private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
-    private static String[] trackConditions;
+    private static Map<String, Double> trackConditions;
     private static Horse currentHorse = null;
     private static Race currentRace = null;
     private static raceTrack raceTrack;
@@ -139,7 +139,14 @@ public class guiMain {
             }
         });
 
-        JPanel trackConditionElemenet = trackConditionSelector(trackConditions);
+        String[] conditions = new String[trackConditions.size()];
+        int counter = 0;
+        for(String condition: trackConditions.keySet()){
+            conditions[counter] = condition;
+            counter++;
+        }
+
+        JPanel trackConditionElemenet = trackConditionSelector(conditions);
 
         for (int i = 1; i <= laneCount.value; i ++){
             JPanel laneSelector = laneSelector(i, horseNames);
@@ -214,9 +221,14 @@ public class guiMain {
     }
 
     public static void loadExtras(){
-        optionLoader loader = new optionLoader("track");
+        databaseHandler trackConditionsDB = new databaseHandler("./Part2/database/conditions.csv");
+        List<List<String>> trackConditionsData = trackConditionsDB.readAll();
+        trackConditions = new LinkedHashMap<>();
 
-        trackConditions = ((loader.getOptions()).get("conditions")).toArray(new String[0]);
+        for (List<String> condition: trackConditionsData){
+            trackConditions.put(condition.get(0), Double.valueOf(condition.get(1)));
+        }
+
 
     }
 
@@ -290,7 +302,7 @@ public class guiMain {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         
         conditionSelector.addItemListener((ItemEvent item) -> {
-            raceTrack.setCondition((String) item.getItem());
+            raceTrack.setCondition(trackConditions.get(((String) item.getItem())));
         });
 
         panel.add(elementTitle);
