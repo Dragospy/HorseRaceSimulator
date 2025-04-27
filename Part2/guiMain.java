@@ -20,6 +20,7 @@ public class guiMain {
     private static Race currentRace = null;
     private static raceTrack raceTrack;
     private static JTabbedPane tabs;
+    private static boolean ignoreEvent = false;
 
     public static void main(String[] args) {
         loadHorses();
@@ -266,6 +267,17 @@ public class guiMain {
         }
     }
 
+    public static boolean isHorseSelected(Horse horse){
+        for (int i = 0; i < laneCount.value - 1; i++) {
+            System.out.println(horse.getName() + " cool " + selectedHorses[i].getName());
+            if (horse.equals(selectedHorses[i])){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     //Elements
 
     public static JButton Button(String text, int x, int y) {
@@ -281,9 +293,19 @@ public class guiMain {
         JComboBox<String> laneSelector = new JComboBox<>(horseNames);
         
         laneSelector.addItemListener((ItemEvent item) -> {
-            selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
-            if (raceTrack != null){
-                raceTrack.updateHorse(lane-1);
+            if (raceTrack != null && !ignoreEvent){
+                if (!isHorseSelected(availableHorses[laneSelector.getSelectedIndex()])){
+                    selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
+                    if (raceTrack != null){
+                        raceTrack.updateHorse(lane-1);
+                    }
+                }
+                else{
+                    ignoreEvent = true;
+                    laneSelector.setSelectedIndex(lane-1);
+                    ignoreEvent = false;
+                    JOptionPane.showMessageDialog(null, "Horse is already in a lane", "Error", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 

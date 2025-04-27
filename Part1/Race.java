@@ -160,12 +160,12 @@ public class Race
                         Horse horse = horses.get(i);
                         if (horse.equals(winnerHorse)){
                             //Update the confidence of the horse to reflect their race outcome (aka we take it up)
-                            horse.setConfidence(helperMethods.truncate(horse.getConfidence() + 0.1, 2));
+                            horse.setConfidence(helperMethods.truncate(horse.getConfidence()*1.05, 2));
                             horse.setCurrentRaceData(1, "win"); //Counted as win
                         }
                         else{
                             //We update the confidence of the horse to reflect their race outcome (aka we take it down)
-                            horse.setConfidence(helperMethods.truncate(horse.getConfidence() - 0.1, 2));
+                            horse.setConfidence(helperMethods.truncate(horse.getConfidence()*0.95, 2));
                             if (horse.hasFallen()){
                                 horse.setCurrentRaceData(2, "win"); //2 is counted as a fall
                             }
@@ -191,7 +191,7 @@ public class Race
                 if (raceTrackGUI != null){
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
-                        horse.setConfidence(helperMethods.truncate(horse.getConfidence() - 0.1, 2));
+                        horse.setConfidence(helperMethods.truncate(horse.getConfidence()*0.95, 2));
 
                         helperMethods.saveHorse(horse);
                         raceTrackGUI.updateHorse(i);
