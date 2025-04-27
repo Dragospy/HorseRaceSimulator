@@ -14,6 +14,7 @@ public class guiMain {
     private final static valueContainer trackLength = new valueContainer(15);
     private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
+    private static String[] horseNames;
     private static Map<String, Double> trackConditions;
     private static Horse currentHorse = null;
     private static Race currentRace = null;
@@ -58,7 +59,7 @@ public class guiMain {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        mainPanel.add(new statisticsPanel());
+        mainPanel.add(new statisticsPanel(horseNames));
 
         return mainPanel;
     }
@@ -66,7 +67,6 @@ public class guiMain {
     public static JPanel horseCustomization(){
         //Main panel setup
         JPanel mainPanel = new JPanel();
-        String[] horseNames = new String[availableHorses.length];
         JPanel horseSelectorPanel = new JPanel();
         JPanel customizationPanel = new customizationPanel(availableHorses[0], raceTrack, 0, currentRace);
         JLabel selectorTitle = new JLabel("Select Horse ");
@@ -75,10 +75,7 @@ public class guiMain {
 
         //Horse selector
 
-        for (int i = 0; i < availableHorses.length; i++){
-            horseNames[i] = availableHorses[i].getName();
-        }
-
+        
         JComboBox<String> horseSelector = new JComboBox<>(horseNames);
         
         horseSelector.addItemListener((ItemEvent item) -> {
@@ -226,6 +223,12 @@ public class guiMain {
 
         for (List<String> condition: trackConditionsData){
             trackConditions.put(condition.get(0), Double.valueOf(condition.get(1)));
+        }
+
+
+       horseNames = new String[availableHorses.length];
+        for (int i = 0; i < availableHorses.length; i++){
+            horseNames[i] = availableHorses[i].getName();
         }
 
 

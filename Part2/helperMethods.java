@@ -66,7 +66,7 @@ public class helperMethods {
         data.add(horse.getName());
 
         double averageSpeed = truncate((horseRaceData[0]/horseRaceData[1]), 2);
-        data.add(String.valueOf(averageSpeed));
+        data.add((String.valueOf(averageSpeed).equals("NaN"))? String.valueOf(0): String.valueOf(averageSpeed));
 
 
         if (horse.hasFallen()){
