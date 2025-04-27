@@ -52,22 +52,25 @@ public class raceTrack extends JPanel{
         finishLine.setLocation(20 * raceLength, 0);
     }
 
-    public void updateHorse(int horseIndex){
-        JLabel horseChar = this.horseCharacters[horseIndex];
+    //Horse index is not needed if we dont change horse
+    public void updateHorse(int laneIndex){
+        JLabel horseChar = this.horseCharacters[laneIndex];
         if (horseChar != null){
-            horseChar.setText(String.valueOf(this.selectedHorses[horseIndex].getSymbol()));
-            horseChar.setLocation(5 + 20 * this.selectedHorses[horseIndex].getDistanceTravelled(), horseChar.getY());
-            horseChar.putClientProperty("index", horseIndex);
+            horseChar.setText(String.valueOf(this.selectedHorses[laneIndex].getSymbol()));
+            horseChar.setLocation(5 + 20 * this.selectedHorses[laneIndex].getDistanceTravelled(), horseChar.getY());
+            horseChar.putClientProperty("index", laneIndex);
+            horseChar.putClientProperty("name", this.selectedHorses[laneIndex].getName());
             horseChar.repaint();     // refresh the label
             this.repaint();          // refresh the panel
         }
     }
 
-    public void updateHorseCustomization(int currentHorse){
+    public void updateHorseCustomization(Horse currentHorse, String horseName){
         for (int i = 0; i < laneCount; i++){
-            int currentHorseID = (int)(horseCharacters[i].getClientProperty("index"));
-            if ( currentHorseID == currentHorse){
-                updateHorse(i);
+            String currentHorseName = (String)(horseCharacters[i].getClientProperty("name"));
+            if (currentHorseName.equals(horseName)){
+                horseCharacters[i].setText(currentHorse.getSymbol());
+                this.repaint();   
             }
         }
 
@@ -86,6 +89,7 @@ public class raceTrack extends JPanel{
         currentHorseCharacter.setOpaque(false); // allow background color to show
         currentHorseCharacter.setBounds(5, 0, 50, 50); // x, y, width, height
         currentHorseCharacter.putClientProperty("index", laneIndex);
+        currentHorseCharacter.putClientProperty("name", this.selectedHorses[laneIndex].getName());
 
         this.horseCharacters[laneIndex] = currentHorseCharacter;
         lane.add(currentHorseCharacter);

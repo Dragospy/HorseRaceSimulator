@@ -2,6 +2,9 @@ package Part2;
 
 import Part1.*;
 import java.awt.event.ItemEvent;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 public class guiMain {
@@ -9,28 +12,14 @@ public class guiMain {
     private final static int width = 1200;
     private final static valueContainer laneCount = new valueContainer(3);
     private final static valueContainer trackLength = new valueContainer(15);
-    private static raceTrack raceTrack;
-    private final static Horse[] availableHorses = {
-        new Horse('A', "Horse A" ,0.8),
-        new Horse('B', "Horse B" ,0.8),
-        new Horse('C', "Horse C" ,0.8),
-        new Horse('D', "Horse D" ,0.8),
-        new Horse('E', "Horse E" ,0.8),
-        new Horse('F', "Horse F" ,0.8),
-        new Horse('G', "Horse G" ,0.8),
-        new Horse('H', "Horse H" ,0.8),
-        new Horse('I', "Horse I" ,0.8),
-        new Horse('J', "Horse J" ,0.8),
-        new Horse('K', "Horse K" ,0.8),
-        new Horse('L', "Horse L" ,0.8),
-        new Horse('M', "Horse M" ,0.8),
-        new Horse('N', "Horse N" ,0.8),
-        new Horse('O', "Horse O" ,0.8),
-    }; 
+    private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
     private static Horse currentHorse = null;
+    private static raceTrack raceTrack;
 
     public static void main(String[] args) {
+        loadHorses();
+
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Track Setup", trackPanel());
         tabs.addTab("Horse Customization", horseCustomization());
@@ -72,32 +61,36 @@ public class guiMain {
         //Main panel setup
         JPanel mainPanel = new JPanel();
         String[] horseNames = new String[availableHorses.length];
-        JPanel horseSelector = new JPanel();
-        JLabel elementTitle = new JLabel("Select Horse ");
+        JPanel horseSelectorPanel = new JPanel();
+        JPanel customizationPanel = new customizationPanel(availableHorses[0], raceTrack, 0);
+        JLabel selectorTitle = new JLabel("Select Horse ");
         currentHorse = availableHorses[0];
-
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
+        //Horse selector
 
         for (int i = 0; i < availableHorses.length; i++){
             horseNames[i] = availableHorses[i].getName();
         }
 
-        JComboBox<String> laneSelector = new JComboBox<>(horseNames);
-
-        //Horse Selector
-        laneSelector.addItemListener((ItemEvent arg0) -> {
+        JComboBox<String> horseSelector = new JComboBox<>(horseNames);
+        
+        horseSelector.addItemListener((ItemEvent item) -> {
             if (raceTrack != null){
-                currentHorse = availableHorses[laneSelector.getSelectedIndex()];
-                //raceTrack.updateHorseCustomization(laneSelector.getSelectedIndex());
+                currentHorse = availableHorses[horseSelector.getSelectedIndex()];
+                mainPanel.remove(mainPanel.getComponentCount() - 1);
+                mainPanel.add(new customizationPanel(availableHorses[horseSelector.getSelectedIndex()], raceTrack, horseSelector.getSelectedIndex()));
+                mainPanel.revalidate();      // re-layout the panel
+                mainPanel.repaint();         // repaint the UI
             }
         });
+        
+        horseSelector.setSelectedIndex(0);
+        horseSelectorPanel.add(selectorTitle);
+        horseSelectorPanel.add(horseSelector);
 
-        laneSelector.setSelectedIndex(0);
-
-        horseSelector.add(elementTitle);
-        horseSelector.add(laneSelector);
-
-        mainPanel.add(horseSelector);
+        mainPanel.add(horseSelectorPanel);
+        mainPanel.add(customizationPanel);
 
         return mainPanel;
     }
@@ -148,6 +141,8 @@ public class guiMain {
             laneSelectors.add(laneSelector);
         }
 
+        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
+
         contentPanel.add(laneCountElement);
         contentPanel.add(trackLengthElement);
 
@@ -174,14 +169,43 @@ public class guiMain {
 
         panel.add(startButton);
 
-        raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses);
-
         panel.add(raceTrack);
         
         return panel;
     }
 
     //Methods
+
+    public static void loadHorses(){
+        databaseHandler horseData = new databaseHandler("./Part2/database/horses.csv");
+        databaseHandler horseAttributes= new databaseHandler("./Part2/database/attributes.csv");
+        databaseHandler horseAccessories = new databaseHandler("./Part2/database/accessories.csv");
+        optionLoader loader = new optionLoader();   
+        
+        List<List<String>> records = horseData.readAll();
+        List<List<String>> allAttributes = horseAttributes.readAll();
+        List<List<String>> allAccessories = horseAccessories.readAll();
+        int counter = 0;
+
+        for (List<String> record : records) {
+            Map<String, String> attributes = new LinkedHashMap<>();
+            int attributeCount = 1;
+            for (String attribute: loader.getAttributeTypes()){
+                attributes.put(attribute, (allAttributes.get(counter)).get(attributeCount));
+                attributeCount++;
+            }
+
+            Map<String, String> accessories = new LinkedHashMap<>();
+            int accessoryCount = 1;
+            for (String accessory: loader.getAccessoryTypes()){
+                accessories.put(accessory, (allAccessories.get(counter)).get(accessoryCount));
+                accessoryCount++;
+            }
+
+            availableHorses[counter] = new Horse(record.get(0), record.get(1), Double.parseDouble(record.get(2)), attributes, accessories);
+            counter++;
+        }
+    }
 
     public static void startTheRace(){
         Race currentRace = new Race(trackLength.value, true);
@@ -193,12 +217,6 @@ public class guiMain {
         }
 
         new Thread(() -> currentRace.startRace()).start(); 
-    }
-
-    public static void updateHorsePosition(int i){
-        if (raceTrack != null){
-            raceTrack.updateHorse(i);
-        }
     }
 
     //Elements
@@ -215,9 +233,10 @@ public class guiMain {
         JLabel elementTitle = new JLabel("Lane " + lane);
         JComboBox<String> laneSelector = new JComboBox<>(horseNames);
         
-        laneSelector.addItemListener((ItemEvent arg0) -> {
+        laneSelector.addItemListener((ItemEvent item) -> {
             selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
             if (raceTrack != null){
+                System.out.println(laneSelector.getSelectedIndex());
                 raceTrack.updateHorse(lane-1);
             }
         });
@@ -271,15 +290,4 @@ public class guiMain {
 
         return valuePanel;
     }
-}
-
-class valueContainer{
-    int value;
-
-    public valueContainer(int newValue) {
-        value = newValue;
-    }
-}
-interface passedFunction{
-    void execute();
 }
