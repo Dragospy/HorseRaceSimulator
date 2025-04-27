@@ -2,6 +2,7 @@ package Part2;
 
 import Part1.*;
 import java.awt.event.ItemEvent;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ public class guiMain {
     private final static valueContainer trackLength = new valueContainer(15);
     private final static Horse[] availableHorses = new Horse[15];
     private final static Horse[] selectedHorses = new Horse[15];
+    private final static ArrayList<Horse> inUseHorses = new ArrayList<>();
     private static String[] horseNames;
     private static Map<String, Double> trackConditions;
     private static Horse currentHorse = null;
@@ -267,17 +269,6 @@ public class guiMain {
         }
     }
 
-    public static boolean isHorseSelected(Horse horse){
-        for (int i = 0; i < laneCount.value - 1; i++) {
-            System.out.println(horse.getName() + " cool " + selectedHorses[i].getName());
-            if (horse.equals(selectedHorses[i])){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     //Elements
 
     public static JButton Button(String text, int x, int y) {
@@ -293,12 +284,11 @@ public class guiMain {
         JComboBox<String> laneSelector = new JComboBox<>(horseNames);
         
         laneSelector.addItemListener((ItemEvent item) -> {
-            if (raceTrack != null && !ignoreEvent){
-                if (!isHorseSelected(availableHorses[laneSelector.getSelectedIndex()])){
+            if (item.getStateChange() == ItemEvent.SELECTED && raceTrack != null && !ignoreEvent){
+                if (!inUseHorses.contains(availableHorses[laneSelector.getSelectedIndex()])){
                     selectedHorses[lane-1] = availableHorses[laneSelector.getSelectedIndex()];
-                    if (raceTrack != null){
-                        raceTrack.updateHorse(lane-1);
-                    }
+                    inUseHorses.set(lane-1, availableHorses[laneSelector.getSelectedIndex()]);
+                    raceTrack.updateHorse(lane-1);
                 }
                 else{
                     ignoreEvent = true;
@@ -310,6 +300,7 @@ public class guiMain {
         });
 
         selectedHorses[lane-1] = availableHorses[lane-1];
+        inUseHorses.add(availableHorses[lane-1]);
         laneSelector.setSelectedIndex(lane - 1);
 
         panel.add(elementTitle);
