@@ -27,13 +27,8 @@ First, go inside the Main.java file, and tweak it to your liking: <br>
 Type the following commands in the terminal, from the main directory (not inside either of the Part folders):
 <br>
 -----Only needed on first run------<br>
-javac Part1/Horse.java <br>
-javac Part1/Race.java <br>
-javac Part1/Main.java <br>
-<br>
-javac -d . Part1/Horse.java <br>
-javac -d . Part1/Race.java <br>
-javac -d . Part1/Main.java <br>
+javac Part1/*.java<br>
+javac -d . Part1/*.java<br>
 -----Only needed on first run------ <br>
 <br>
 Then run this to start: <br>
@@ -48,33 +43,13 @@ The guy version required no manual tweaking, it is all done using the GUI
 Type the following commands in the terminal, from the main directory (not inside either of the Part folders):
 <br>
 -----Only needed on first run------<br>
-javac Part1/Horse.java<br>
-javac Part1/Race.java<br>
-javac Part1/Main.java<br>
+javac Part1/*.java<br>
+javac -d . Part1/*.java<br>
 <br>
-javac -d . Part1/Horse.java<br>
-javac -d . Part1/Race.java<br>
-javac -d . Part1/Main.java<br>
-<br>
-javac Part2/optionLoader.java<br>
-javac Part2/databaseHandler.java<br>
-javac Part2/passedFunction.java<br>
-javac Part2/valueContainer.java<br>
-javac Part2/helperMethods.java<br>
-javac Part2/raceTrack.java<br>
-javac Part2/customizationPanel.java<br>
-javac Part2/statisticsPanel.java<br>
-javac Part2/guiMain.java<br>
 
-javac -d . Part2/optionLoader.java<br>
-javac -d . Part2/databaseHandler.java<br>
-javac -d . Part2/passedFunction.java<br>
-javac -d . Part2/valueContainer.java<br>
-javac -d . Part2/helperMethods.java<br>
-javac -d . Part2/raceTrack.java<br>
-javac -d . Part2/customizationPanel.java<br>
-javac -d . Part2/statisticsPanel.java<br>
-javac -d . Part2/guiMain.java<br>
+javac Part2/*.java<br>
+javac -d . Part2/*.java<br>
+
 -----Only needed on first run------<br>
 <br>
 Then run this to start:
