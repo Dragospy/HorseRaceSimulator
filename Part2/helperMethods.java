@@ -65,7 +65,6 @@ public class helperMethods {
         List<String> data = new ArrayList<>();
         double[] horseRaceData = horse.getCurrentRaceData();
 
-        System.out.println(horseRaceData[0] + " " + horseRaceData[1]);
 
         data.add(horse.getName());
 

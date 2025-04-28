@@ -162,17 +162,17 @@ public class Race
                         Horse horse = horses.get(i);
                         if (horse.equals(winnerHorse)){
                             //Update the confidence of the horse to reflect their race outcome (aka we take it up)
-                            horse.setConfidence(horse.getConfidence()*1.05);
+                            horse.setConfidence(horse.getConfidence()*1.25);
                             horse.setCurrentRaceData(1, "win"); //Counted as win
                         }
                         else{
                             //We update the confidence of the horse to reflect their race outcome (aka we take it down)
                             if (horse.hasFallen()){
-                                horse.setConfidence(horse.getConfidence()*0.85);
+                                horse.setConfidence(horse.getConfidence()*0.95);
                                 horse.setCurrentRaceData(2, "win"); //2 is counted as a fall
                             }
                             else{
-                                horse.setConfidence(horse.getConfidence()*0.95);
+                                horse.setConfidence(horse.getConfidence()*1.10);
                                 horse.setCurrentRaceData(0, "win");//Counted as simply not finishing
                             }
                         }
