@@ -86,7 +86,7 @@ public class statisticsPanel extends JTabbedPane{
                 double winRate = 0;
                 double fallRate = 0;
                 Map<String, Integer> trackConditionTracker = new HashMap<>();
-                String bestTrackCondition = "";
+                String bestTrackCondition = "none";
                 for (List<String> row2: data){
                         if (row2.get(0).equals(row.get(0))){
                             averageSpeed += Double.valueOf(row2.get(1));
@@ -100,12 +100,13 @@ public class statisticsPanel extends JTabbedPane{
                             fallRate += 1;
                         }
                         
-                        
-                        if(trackConditionTracker.get(row2.get(4)) == null){
-                            trackConditionTracker.put(row2.get(4), 1);
-                        }
-                        else if (trackConditionTracker.get(row2.get(4)) != null){
-                            trackConditionTracker.put(row2.get(4), trackConditionTracker.get(row2.get(4)) + 1);
+                        if (row2.get(3).equals("WON")){
+                            if(trackConditionTracker.get(row2.get(4)) == null){
+                                trackConditionTracker.put(row2.get(4), 1);
+                            }
+                            else if (trackConditionTracker.get(row2.get(4)) != null){
+                                trackConditionTracker.put(row2.get(4), trackConditionTracker.get(row2.get(4)) + 1);
+                            }
                         }
 
                         count++;
