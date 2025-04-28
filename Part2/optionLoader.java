@@ -8,15 +8,19 @@ public class optionLoader {
 
     private final Map<String, List<String>> optionList = new LinkedHashMap<>();
 
+    //Sets the option folder that we will be checking and loads said option folder
     public optionLoader(String option) {
         this.optionFolder = "./Part2/assets/"+option;
         loadOption();
     }
 
+    //Checks if option folder exists first
+    //It then sorts them alphabetically and saves a map that contains each option along with its suboptions 
+    //from that folder
     private void loadOption() {
         File folder = new File(optionFolder);
         if (!folder.exists() || !folder.isDirectory()) {
-            System.out.println("Attributes folder not found: " + optionFolder);
+            System.out.println("Folder not found: " + optionFolder);
             return;
         }
 
@@ -31,6 +35,7 @@ public class optionLoader {
         }
     }
 
+    //Returns a String list of the different options of a given file
     private List<String> readOptions(File file) {
         List<String> options = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {

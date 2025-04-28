@@ -24,17 +24,20 @@ public class guiMain {
     private static JTabbedPane tabs;
     private static boolean ignoreEvent = false;
 
+    //Loads horses and other extra data for persistent Horse Racing
+    //It then loads all of the panels
     public static void main(String[] args) {
         loadHorses();
         loadExtras();
 
+        //Loads tabbed pane with all of the different panels
         tabs = new JTabbedPane();
         tabs.addTab("Track Setup", trackPanel());
         tabs.addTab("Horse Customization", horseCustomization());
         tabs.addTab("Race Stats", statistics());
-        tabs.addTab("Race Bets", betting());
         tabs.addTab("Race Start", racePanel());
 
+        //Initialise the actual GUI frame with all the tabs in it
         initialiseFrame("Race Horse Simulator", tabs);
     }
 
@@ -46,24 +49,13 @@ public class guiMain {
         frame.setVisible(true);
     }
 
-
     //Panels
-
-    public static JPanel betting(){
-        //Main panel setup
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-        return mainPanel;
-    }
-
     public static JPanel statistics(){
         //Main panel setup
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-        mainPanel.add(new statisticsPanel(horseNames));
-
+        statisticsPanel statsPanel = new statisticsPanel(horseNames);
+        mainPanel.add(statsPanel);
         return mainPanel;
     }
 
@@ -81,6 +73,7 @@ public class guiMain {
         
         JComboBox<String> horseSelector = new JComboBox<>(horseNames);
         
+        //When horse selection is changed, we create a new customisation panel for the currently selected horse
         horseSelector.addItemListener((ItemEvent item) -> {
             currentHorse = availableHorses[horseSelector.getSelectedIndex()];
             mainPanel.remove(mainPanel.getComponentCount() - 1);
@@ -89,6 +82,7 @@ public class guiMain {
             mainPanel.repaint();         // repaint the UI
         });
         
+        //By default it is set to the first horse in the list
         horseSelector.setSelectedIndex(0);
         horseSelectorPanel.add(selectorTitle);
         horseSelectorPanel.add(horseSelector);
@@ -105,18 +99,21 @@ public class guiMain {
         JPanel laneSelectors = new JPanel();
         JLabel title = new JLabel("Track Customization");
         JPanel contentPanel = new JPanel();
-        String[] horseNames = new String[availableHorses.length];
 
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         laneSelectors.setLayout(new BoxLayout(laneSelectors, BoxLayout.Y_AXIS));
 
+        //we get all of the horse's, get their names and add them to an array
         for (int i = 0; i < availableHorses.length; i++){
             horseNames[i] = availableHorses[i].getName();
         }
 
         //Add panels
+        //Creates the lane count element, this element adds/removes lanes from the raceTrack
+        //Element is given a custom function to execute, doing the adding and removing
         JPanel laneCountElement = idElement("Number of Lanes","Lanes", "lane", laneCount, 0, 15, () -> {
+            ignoreEvent = true;
             int count = laneSelectors.getComponentCount();
             if (count > laneCount.value) {
                 laneSelectors.remove(count - 1); // remove the last component
@@ -130,28 +127,34 @@ public class guiMain {
             if (raceTrack != null){
                 raceTrack.changeLaneCount(laneCount.value);
             }
+
+            ignoreEvent = false;
         });
 
+        //Creates the track lane length element, this element changes the position of the finish line on the track
         JPanel trackLengthElement = idElement("Track Length" ,"Track length", "length", trackLength, 5, 40, () -> {
             if (raceTrack != null){
                 raceTrack.changeTrackLength(trackLength.value);
             }
         });
 
+        //Creating a track conditions selector, that sets the condition of the track
         String[] conditions = new String[trackConditions.size()];
         int counter = 0;
         for(String condition: trackConditions.keySet()){
             conditions[counter] = condition;
             counter++;
         }
-
         JPanel trackConditionElemenet = trackConditionSelector(conditions);
 
+        //adds as many lane selectors as there are lanes
         for (int i = 1; i <= laneCount.value; i ++){
             JPanel laneSelector = laneSelector(i, horseNames);
             laneSelectors.add(laneSelector);
         }
 
+        //Create the track object, this object will remain the same throught the running of the program, it will however
+        //Have fields that change throught the running of the program
         raceTrack = new raceTrack(width, laneCount.value, 100, trackLength.value, selectedHorses, tabs);
 
         contentPanel.add(laneCountElement);
@@ -165,6 +168,8 @@ public class guiMain {
         return mainPanel;
     }
 
+    //Displays the race track element that we created earlier
+    //We also add a Start button, that starts a race, and displays it
     public static JPanel racePanel(){
         JPanel panel = new JPanel();
         panel.setLayout(null);
@@ -186,7 +191,7 @@ public class guiMain {
     }
 
     //Methods
-
+    //Loads all of the saved horses and their properties
     public static void loadHorses(){
         databaseHandler horseData = new databaseHandler("./Part2/database/horses.csv");
         databaseHandler horseAttributes= new databaseHandler("./Part2/database/attributes.csv");
@@ -219,6 +224,7 @@ public class guiMain {
         }
     }
 
+    //Loads the extra data, and does all that needs to be done before program can run
     public static void loadExtras(){
         databaseHandler trackConditionsDB = new databaseHandler("./Part2/database/conditions.csv");
         List<List<String>> trackConditionsData = trackConditionsDB.readAll();
@@ -237,7 +243,9 @@ public class guiMain {
 
     }
 
+    //Instantiates a new race everytime it is called, and replaces the old one
     public static void startTheRace(){
+        //If there was a previous race, but its finished, start a new one
         if (currentRace != null && currentRace.isFinished()){
             currentRace = new Race(trackLength.value, false);
 
@@ -249,11 +257,14 @@ public class guiMain {
 
             new Thread(() -> currentRace.startRace()).start(); 
 
+            //Disable tab selection
             tabs.setEnabled(false);
         }
+        //If there is a previous race, but its ongoing, alert user
         else if (currentRace != null && !currentRace.isFinished()){
             JOptionPane.showMessageDialog(null, "A race is already ongoing", "Error", JOptionPane.WARNING_MESSAGE);
         }
+        //If there are no previous races, start new race
         else if (currentRace == null){
             currentRace = new Race(trackLength.value, false);
 
@@ -265,6 +276,7 @@ public class guiMain {
 
             new Thread(() -> currentRace.startRace()).start(); 
 
+            //Disable tab selection
             tabs.setEnabled(false);
         }
     }
@@ -278,6 +290,8 @@ public class guiMain {
         return button;
     }
 
+    //Lane selector element, it lets the user select a horse for a specific lane
+    //If the horse is already in a lane, then we let the user know
     private static JPanel laneSelector(int lane, String[] horseNames){
         JPanel panel = new JPanel();
         JLabel elementTitle = new JLabel("Lane " + lane);
@@ -299,6 +313,7 @@ public class guiMain {
             }
         });
 
+        //Make sure select horses in lane order by default.
         selectedHorses[lane-1] = availableHorses[lane-1];
         inUseHorses.add(availableHorses[lane-1]);
         laneSelector.setSelectedIndex(lane - 1);
@@ -309,6 +324,8 @@ public class guiMain {
         return panel;
     }
 
+    //Track condition selector, it simply modifies the track condition multiplier and label when
+    //Selected value is changed.
     private static JPanel trackConditionSelector(String[] trackConditionOptions){
         JPanel panel = new JPanel();
         JLabel elementTitle = new JLabel("Track Conditions");

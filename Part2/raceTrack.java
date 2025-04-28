@@ -13,13 +13,15 @@ public class raceTrack extends JPanel{
     private JLabel[] horseLabels = new JLabel[15];
     private double conditionMultiplier = 1;
     private String conditionLabel = "normal";
-    private JTabbedPane tabs;
+    private final JTabbedPane tabs;
 
+    //Creates the race track accoring to the provided data in the constructor, as well as the finish line
     public raceTrack(int width, int laneCount, int yPos, int raceLength, Horse[] selectedHorses, JTabbedPane tabs) {
         this.width = width;
         this.laneCount = laneCount;
         this.selectedHorses = selectedHorses;
         this.tabs = tabs;
+    
 
         setSize(width, 40 * laneCount);
         setLocation(0, yPos);
@@ -37,6 +39,7 @@ public class raceTrack extends JPanel{
         }        
     }
 
+    //Changes the number of displayed lanes according to lane count
     public void changeLaneCount(int laneCount){
         setSize(width, 40 * laneCount);
         finishLine.setSize(5, 40 * laneCount);
@@ -52,11 +55,12 @@ public class raceTrack extends JPanel{
         }
     }
 
+    //Changes finish line position according to trackLength
     public void changeTrackLength(int raceLength){
         finishLine.setLocation(20 * raceLength, 0);
     }
 
-    //Horse index is not needed if we dont change horse
+    //Updates the horse in a given lane to match the selected horse
     public void updateHorse(int laneIndex){
         JLabel horseChar = this.horseCharacters[laneIndex];
         if (horseChar != null){
@@ -66,7 +70,7 @@ public class raceTrack extends JPanel{
             }else{
                 horseChar.setText(String.valueOf(currentHorse.getSymbol()));
             }
-            horseLabels[laneIndex].setText(currentHorse.getName() + " (Current confidence " + currentHorse.getConfidence() + ")" );
+            horseLabels[laneIndex].setText(currentHorse.getName() + " (Current confidence " + helperMethods.truncate(currentHorse.getConfidence(), 2) + ")");
             horseChar.setLocation(5 + 20 * currentHorse.getDistanceTravelled(), horseChar.getY());
             horseChar.putClientProperty("index", laneIndex);
             horseChar.putClientProperty("name", currentHorse.getName());
@@ -75,6 +79,7 @@ public class raceTrack extends JPanel{
         }
     }
 
+    //Updates the customisation of a given horse
     public void updateHorseCustomization(Horse currentHorse, String horseName){
         for (int i = 0; i < laneCount; i++){
             String currentHorseName = (String)(horseCharacters[i].getClientProperty("name"));
@@ -102,6 +107,7 @@ public class raceTrack extends JPanel{
         return this.conditionLabel;
     }
 
+    //Lets the user know the race is finished, and re-enables switching to other tabs
     public void raceFinished(String type, String message){
         if (type.equals("noWinner")){
             JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
@@ -113,12 +119,13 @@ public class raceTrack extends JPanel{
         tabs.setEnabled(true);
     }
 
+    //Drawslane along with horse and label 
     private void drawLane(int laneIndex, int yPos){
         Horse currentHorse = selectedHorses[laneIndex];
         JPanel laneContainer = new JPanel();
         JPanel lane = new JPanel();
         JLabel currentHorseCharacter = new JLabel(String.valueOf(currentHorse.getSymbol()));
-        JLabel laneLabel = new JLabel(currentHorse.getName() + " (Current confidence " + currentHorse.getConfidence() + ")" );
+        JLabel laneLabel = new JLabel(currentHorse.getName() + " (Current confidence " + helperMethods.truncate(currentHorse.getConfidence(), 2) + ")");
 
         laneContainer.setLayout(null);
         laneContainer.setSize(width, 40);

@@ -13,6 +13,7 @@ public class customizationPanel extends JPanel{
     private Map<String, List<String>> accessories;
     private Race currentRace;
 
+    //Constructs the customisation panel for the seleced horse
     public customizationPanel(Horse selectedHorse, raceTrack currentTrack, int horseIndex, Race currentRace) {
         this.accessories = null;
         this.currentHorse = selectedHorse;
@@ -31,6 +32,8 @@ public class customizationPanel extends JPanel{
 
         textField.setText(selectedHorse.getSymbol());
 
+        //Set the horse symbol to the character that the user has seleced
+        //As long as it is 1 code point
         textField.addActionListener((ActionEvent e) -> {
             String symbol = textField.getText();
 
@@ -44,9 +47,9 @@ public class customizationPanel extends JPanel{
             }
         });
 
+        //Loads all of the attributes and accessories that are available, and creates selectors for each
         loadAttributes(attributesLoader);
         loadAcessories(accessoriesLoader);   
-
         loadSelectors(attributesPanel, attributes, currentTrack, horseIndex, "attribute");
         loadSelectors(accessoryPanel, accessories, currentTrack, horseIndex, "accessory");
         
@@ -56,6 +59,8 @@ public class customizationPanel extends JPanel{
 
     }
 
+    //Creates a selector for the given property
+    //When selected value is changed, it updates said property of the horse
     private void loadSelectors(JPanel panel, Map<String, List<String>> loopAbleList, raceTrack currentTrack, int horseIndex, String type) {
         for (String itemName: loopAbleList.keySet()){
             JLabel title = new JLabel(helperMethods.formatWord(itemName));
@@ -90,12 +95,6 @@ public class customizationPanel extends JPanel{
             title.setAlignmentX(JLabel.CENTER_ALIGNMENT);
             selector.setAlignmentX(JComboBox.CENTER_ALIGNMENT);
         }
-    }
-
-
-
-    public void saveHorseData (Horse selectedHorse){
-
     }
 
     public void loadAttributes(optionLoader loader){

@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class helperMethods {
+
+    //Formats words to be in the following format: colour -> Colour, horseColour -> Horse Colour
     public static String formatWord(String input) {
         if (input == null || input.isEmpty()) {
             return input;
@@ -27,6 +29,7 @@ public class helperMethods {
         return output.toString();
     }
 
+    //Saves the data of a given horse
     public static void saveHorse(Horse horse){
         databaseHandler horseData = new databaseHandler("./Part2/database/horses.csv");
         databaseHandler horseAttributes= new databaseHandler("./Part2/database/attributes.csv");
@@ -56,6 +59,7 @@ public class helperMethods {
 
     }
 
+    //Saves the race data of a given horse so that it can be used for statistics
     public static void saveRaceData(Horse horse, String condition){
         databaseHandler horseData = new databaseHandler("./Part2/database/horseRaceData.csv");
         List<String> data = new ArrayList<>();
@@ -91,6 +95,7 @@ public class helperMethods {
         horseData.insert(data);
     }
 
+    //Truncates doubles to a given number of decimal places
     public static double truncate(double value, int decimalPlaces) {
         double factor = Math.pow(10, decimalPlaces);
         return Math.floor(value * factor) / factor;

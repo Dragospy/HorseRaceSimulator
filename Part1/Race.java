@@ -72,6 +72,9 @@ public class Race
      */
     public void startRace()
     {
+        String raceFinishedMessage = "";
+        String raceFinishedStatus = "";
+
         if (raceTrackGUI != null){
             multiplier = raceTrackGUI.getConditionMultiplier();
         }
@@ -122,33 +125,32 @@ public class Race
             if (!horsesStillRacing() && !winners.isEmpty())
             {   
                 Horse winnerHorse = winners.get(0);
-                String message;
                 //Print the winner(s)
                 if (winners.size() > 1) {
-                    message = "Our winners: ";
+                    raceFinishedMessage = "Our winners: ";
                     print("Our winners: ");
                     int i = 0;
                     for (Horse horse : winners) {
                         print(horse.getName());
-                        message += horse.getName();
+                        raceFinishedMessage += horse.getName();
                         if (i < winners.size() - 1) {
                             print(", ");
-                            message += ", ";
+                            raceFinishedMessage += ", ";
                         }
                         i++;
                     }
 
                     //We let the GUI know there has been no winner, and a tie has happened, though this will be counted as a win for each horse
                     if (raceTrackGUI != null){
-                        raceTrackGUI.raceFinished("noWinner", message);
+                        raceFinishedStatus = "noWinner";
                     }
                     
                 } else {
                     //We let the GUI know there has been a winner, and send it to be displayed and end the race
-                    message = "The winner is... " + (winners.get(0)).getName() + "!";
-                    println(message);
+                    raceFinishedMessage = "The winner is... " + (winners.get(0)).getName() + "!";
+                    println(raceFinishedMessage);
                     if (raceTrackGUI != null){
-                        raceTrackGUI.raceFinished("winner", message);
+                        raceFinishedStatus = "winner";
                     }
                 }
 
@@ -160,16 +162,17 @@ public class Race
                         Horse horse = horses.get(i);
                         if (horse.equals(winnerHorse)){
                             //Update the confidence of the horse to reflect their race outcome (aka we take it up)
-                            horse.setConfidence(helperMethods.truncate(horse.getConfidence()*1.05, 2));
+                            horse.setConfidence(horse.getConfidence()*1.05);
                             horse.setCurrentRaceData(1, "win"); //Counted as win
                         }
                         else{
                             //We update the confidence of the horse to reflect their race outcome (aka we take it down)
-                            horse.setConfidence(helperMethods.truncate(horse.getConfidence()*0.95, 2));
                             if (horse.hasFallen()){
+                                horse.setConfidence(horse.getConfidence()*0.85);
                                 horse.setCurrentRaceData(2, "win"); //2 is counted as a fall
                             }
                             else{
+                                horse.setConfidence(horse.getConfidence()*0.95);
                                 horse.setCurrentRaceData(0, "win");//Counted as simply not finishing
                             }
                         }
@@ -191,13 +194,11 @@ public class Race
                 if (raceTrackGUI != null){
                     for (int i = 0; i < horses.size(); i++){
                         Horse horse = horses.get(i);
-                        horse.setConfidence(helperMethods.truncate(horse.getConfidence()*0.95, 2));
+                        horse.setConfidence(horse.getConfidence()*0.85);
 
                         helperMethods.saveHorse(horse);
                         raceTrackGUI.updateHorse(i);
                     }
-
-                    raceTrackGUI.raceFinished("noWinner", "All the horses have fallen");
                 }
             }
 
@@ -223,6 +224,7 @@ public class Race
             }
         }
 
+        raceTrackGUI.raceFinished(raceFinishedStatus, raceFinishedMessage);
     }
     
     /**
@@ -234,7 +236,7 @@ public class Race
      */
     private void moveHorse(Horse theHorse)
     {
-        //if the horse has fallen it cannot move, 
+        //if the horse has fallen it cannot move,  
         //so only run if it has not fallen
         if  (!theHorse.hasFallen() && !raceWonBy(theHorse))
         {
