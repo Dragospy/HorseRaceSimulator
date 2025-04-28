@@ -224,7 +224,9 @@ public class Race
             }
         }
 
-        raceTrackGUI.raceFinished(raceFinishedStatus, raceFinishedMessage);
+        if (raceTrackGUI != null){
+            raceTrackGUI.raceFinished(raceFinishedStatus, raceFinishedMessage);
+        }
     }
     
     /**
